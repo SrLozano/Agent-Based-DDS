@@ -1,9 +1,5 @@
 package agents;
-<<<<<<< HEAD
 
-public class coordinatorAgent {
-}
-=======
 import jade.core.*;
 import jade.core.behaviours.*;
 import jade.core.Agent;
@@ -15,15 +11,17 @@ import jade.domain.FIPAException;
 
 public class coordinatorAgent extends Agent{
     protected void setup(){
-        System.out.println("Agent "+ getLocalName() + " started.");
-        // Registration with the DF
+        // Register petition
         DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName( getAID() );
 
-        ServiceDescription sd  = new ServiceDescription();
-        sd.setType( "Coordinator" );
-        sd.setName( getLocalName() );
+        // Service provided. As many services as desired can be added
+        ServiceDescription sd = new ServiceDescription();
 
+        // Basic setup of the service
+        sd.setType("CoordinatorAgent");
+        sd.setName(getName());
+        sd.setOwnership("Group6");
+        dfd.setName(getAID());
         dfd.addServices(sd);
 
         try {
@@ -37,4 +35,4 @@ public class coordinatorAgent extends Agent{
 }
 
 
->>>>>>> edd9d0d435b9eb020a683446b627cb059dd58499
+
