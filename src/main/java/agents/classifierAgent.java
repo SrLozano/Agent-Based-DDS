@@ -1,9 +1,6 @@
 package agents;
-
 import jade.core.Agent;
-//import jade.core.Filter;
 import weka.classifiers.Evaluation;
-import weka.core.Attribute;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.Instances;
@@ -15,13 +12,10 @@ import weka.filters.Filter;
 import java.io.FileInputStream;
 import java.util.Random;
 
-
-
 public class classifierAgent extends Agent {
     public static void main(String[] args) throws Exception {
 
         double percentage = 30;
-
 
         // Read the dataset for user or coord agent
         DataSource source = new DataSource(System.getProperty("user.dir") + "/audit_risk.arff");
@@ -86,7 +80,6 @@ public class classifierAgent extends Agent {
             // Split data into only 6 attributes (no sabem pq pero té la mateix accuracy que el classifier entrenat
             // amb tots els atributes
 
-
             // The array of arrays that defenies the index of the attributes for each classifier
             // All of them have index 24 as it is the class
             int[][]  allarrays =  {
@@ -115,7 +108,6 @@ public class classifierAgent extends Agent {
                 removeFilter.setInputFormat(test);
                 Instances splittest = Filter.useFilter(test, removeFilter);
 
-
                 // Train and test classifier
                 J48 splitclassifier = new J48();
                 splitclassifier.buildClassifier(splittrain);
@@ -126,8 +118,6 @@ public class classifierAgent extends Agent {
                 System.out.println("spliteval " + count + ' ' + (eval3.correct() / splittest.numInstances()) * 100);
                 count += 1;
             }
-
-
         }
     }
 }
