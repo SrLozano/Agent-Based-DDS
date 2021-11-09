@@ -1,5 +1,6 @@
 package agents;
 
+import behaviours.SplitInputInstances;
 import jade.core.*;
 import jade.core.behaviours.*;
 import jade.core.Agent;
@@ -26,12 +27,22 @@ public class coordinatorAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
+            System.out.println("["+getLocalName()+"]:"+"DF Registered");
+            addBehaviour(new SplitInputInstances());
         }
         catch (FIPAException fe) {
-            fe.printStackTrace(); }
+            System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");
+            doDelete(); }
     }
 
-
+    protected void takeDown() {
+        try {
+            DFService.deregister(this);
+        } catch (jade.domain.FIPAException e) {
+            e.printStackTrace();
+        }
+        super.takeDown();
+    }
 }
 
 

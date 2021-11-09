@@ -31,11 +31,11 @@ public class WaitInputInstances extends CyclicBehaviour{
 
                 Instances data = source.getDataSet();
 
-                ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                msg.setContentObject(data);
+                ACLMessage msg = new ACLMessage(ACLMessage.INFORM); //No lo hacemos como Request??
+                msg.setContentObject(data); //The content of the message it's the data
                 AID dest = new AID("coordinatorAgent", AID.ISLOCALNAME);
-                msg.addReceiver(dest);
-                myAgent.send(msg);
+                msg.addReceiver(dest); //The receiver is the coordinator Agent
+                myAgent.send(msg); //The message is sent
             }
         } catch (Exception e) {
             //añadir más adelante un reinsert path si salta error
