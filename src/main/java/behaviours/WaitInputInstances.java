@@ -24,13 +24,11 @@ public class WaitInputInstances extends CyclicBehaviour{
 
     public void action () {
         try {
-            System.out.println("Data is being read at direction:" + System.getProperty("user.dir") + this.path_file);
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + this.path_file);
+            System.out.println("data is being read at direction:" + System.getProperty("user.dir") + '\\' + this.path_file);
+            ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '\\'+ this.path_file);
             if(source != null) {
                 System.out.println("Read");
-
                 Instances data = source.getDataSet();
-
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM); //No lo hacemos como Request??
                 msg.setContentObject(data); //The content of the message it's the data
                 AID dest = new AID("coordinatorAgent", AID.ISLOCALNAME);
@@ -38,9 +36,9 @@ public class WaitInputInstances extends CyclicBehaviour{
                 myAgent.send(msg); //The message is sent
             }
         } catch (Exception e) {
+            System.out.println("An error occured");
             //añadir más adelante un reinsert path si salta error
             e.printStackTrace();
-            System.out.println("An error occured");
         }
 
     }
