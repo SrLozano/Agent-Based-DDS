@@ -5,7 +5,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
+import weka.core.converters.ConverterUtils.DataSource;
 
 import java.util.Scanner;
 
@@ -25,8 +25,8 @@ public class WaitInputInstances extends CyclicBehaviour{
     public void action () {
         try {
             System.out.println("data is being read at direction:" + System.getProperty("user.dir") + '\\' + this.path_file);
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '\\'+ this.path_file);
-            if(source != null) {
+            DataSource source = new DataSource(System.getProperty("user.dir") + '\\'+ this.path_file);
+            if(source != null) { //ojo always not null
                 System.out.println("Read");
                 Instances data = source.getDataSet();
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM); //No lo hacemos como Request??

@@ -49,7 +49,7 @@
             </build>
         </profile>
         <profile>
-            <id>userAgent</id>
+            <id>systemAgents</id>
             <build>
                 <plugins>
                     <plugin>
@@ -61,7 +61,7 @@
                             <arguments>
                                 <argument>-gui</argument>
                                 <argument>-agents</argument>
-                                <argument>userAgent:agents.userAgent;coordinatorAgent:agent.coordinatorAgent</argument>
+                                <argument>userAgent:agents.userAgent</argument>
                             </arguments>
                         </configuration>
                     </plugin>
