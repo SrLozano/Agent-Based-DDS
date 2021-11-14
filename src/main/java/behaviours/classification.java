@@ -19,7 +19,7 @@ public abstract class classification extends Behaviour { //això de abstract s'h
     //ho deixem pk si no dona error
     private int phase = 1; //nse si serà un número o què, pensarho bé
 
-    public void classification(DataSource source) { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
+    public void classification(DataSource source) throws Exception { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
         switch (phase) { //fer un switch on els 2 cases siguin: training+validation?? i test (amb les instances q passa el user)
 
             case 1: //training
