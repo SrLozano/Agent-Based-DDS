@@ -1,1 +1,11 @@
-behaviours/classification.class
+urv\imas\PingAgent$WaitPingAndReplyBehaviour.class
+urv\imas\PingAgent.class
+urv\imas\protocols\ParallelContractNetResponderAgent$1$1.class
+urv\imas\behaviours\ComplexBehaviourAgent$SingleStepBehaviour.class
+urv\imas\protocols\ContractNetResponderAgent.class
+urv\imas\protocols\ContractNetResponderAgent$1.class
+urv\imas\behaviours\ComplexBehaviourAgent.class
+urv\imas\protocols\ParallelContractNetResponderAgent$1.class
+behaviours\WaitInputInstances.class
+urv\imas\behaviours\ComplexBehaviourAgent$1.class
+urv\imas\protocols\ParallelContractNetResponderAgent.class
