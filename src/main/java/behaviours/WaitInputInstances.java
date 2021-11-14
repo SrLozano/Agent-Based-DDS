@@ -29,7 +29,8 @@ public class WaitInputInstances extends CyclicBehaviour{
             if(source != null) { //ojo always not null
                 System.out.println("Read");
                 Instances data = source.getDataSet();
-                ACLMessage msg = new ACLMessage(ACLMessage.INFORM); //No lo hacemos como Request??
+                String data_str = data.toString();
+                ACLMessage msg = new ACLMessage(ACLMessage.REQUEST); //No lo hacemos como Request??
                 msg.setContentObject(data); //The content of the message it's the data
                 AID dest = new AID("coordinatorAgent", AID.ISLOCALNAME);
                 msg.addReceiver(dest); //The receiver is the coordinator Agent

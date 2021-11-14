@@ -81,7 +81,7 @@ public abstract class classification extends Behaviour { //això de abstract s'h
 }
 
 /*
-        public static void main (String[]args) throws Exception {
+        public static void agents.main (String[]args) throws Exception {
 
 
             if (source != null) {
