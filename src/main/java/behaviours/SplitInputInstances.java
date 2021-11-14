@@ -6,7 +6,6 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 
 
-
 public class SplitInputInstances extends CyclicBehaviour {
 
     public void action () {

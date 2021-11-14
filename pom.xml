@@ -61,7 +61,7 @@
                             <arguments>
                                 <argument>-gui</argument>
                                 <argument>-agents</argument>
-                                <argument>userAgent:agents.userAgent</argument>
+                                <argument>userAgent:agents.userAgent; coordinatorAgent:agents.coordinatorAgent</argument>
                             </arguments>
                         </configuration>
                     </plugin>
