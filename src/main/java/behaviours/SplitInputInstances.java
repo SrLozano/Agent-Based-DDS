@@ -16,7 +16,6 @@ public class SplitInputInstances extends CyclicBehaviour {
             if (msg.getPerformative() == ACLMessage.REQUEST) {
                 Object data_obj = msg.getContentObject();
                 Instances data = (Instances) data_obj; //Puede que dé error, comprobar que funcione
-
                 ACLMessage reply = msg.createReply();
                 if (data.getClass() == Instances.class) {
                     System.out.println("-" + myAgent.getLocalName());
@@ -43,12 +42,11 @@ public class SplitInputInstances extends CyclicBehaviour {
                                     {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
                             };
 
-
                     // Each loop in the for loop represents one classifier
                     int count = 0;
                     for (String[] indices : allarrays) { //Al ponerlo String[]
                         Remove removeFilter = new Remove();
-                        removeFilter.setAttributeIndices(indices);
+                        removeFilter.setAttributeIndices(String.valueOf(indices));
                         removeFilter.setInvertSelection(true);
                         removeFilter.setInputFormat(data);
                         Instances splittrain = Filter.useFilter(data, removeFilter);
