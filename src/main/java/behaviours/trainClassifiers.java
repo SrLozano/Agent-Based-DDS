@@ -75,7 +75,6 @@ public class trainClassifiers extends OneShotBehaviour{
                 randomize.setInputFormat(splittrainval);
 
                 Instances trainval = new Instances(splittrainval, 0, 300);
-                System.out.println(trainval.size());
                 AgentController anotherAgent;
                 try {
                     //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
@@ -97,7 +96,7 @@ public class trainClassifiers extends OneShotBehaviour{
 
         }
         catch (Exception e) {
-            System.out.println("F");
+            System.out.println("E");
             e.printStackTrace();
         }
     }

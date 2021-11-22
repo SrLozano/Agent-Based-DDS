@@ -20,19 +20,18 @@ public class testing_file2{
         p.setParameter(Profile.GUI, "true");
         //System.out.println(getLocalName()+": Launching the agent container ...\n-Profile: " + p);
         ContainerController ac = rt.createMainContainer(p);
+        AgentController anotherAgent;
 
-        for (int i=0; i<5; i++) { //Al ponerlo String[]
-            AgentController anotherAgent;
-            System.out.println("hola");
-            try{
-                //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
-                anotherAgent = ac.createNewAgent("classifier"+i, "agents.classifierAgent",null);
+        try{
+        //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
+                anotherAgent = ac.createNewAgent("classifier", "agents.coordAgent",null);
                 anotherAgent.start();
-            } catch (StaleProxyException e) {
+        }
+        catch (StaleProxyException e) {
                 e.printStackTrace();
             }
 
-        }
+
     }
 
 

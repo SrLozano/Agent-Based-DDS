@@ -10,8 +10,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 
-
-public class coordinatorAgent extends Agent{
+public class coordAgent extends Agent{
     protected void setup(){
         // Register petition
         DFAgentDescription dfd = new DFAgentDescription();
@@ -29,7 +28,7 @@ public class coordinatorAgent extends Agent{
         try {
             DFService.register(this, dfd );
             System.out.println("["+getLocalName()+"]:"+"DF Registered");
-            addBehaviour(new SplitInputInstances());
+            //addBehaviour(new SplitInputInstances());
             addBehaviour(new trainClassifiers());
         }
         catch (FIPAException fe) {
@@ -46,6 +45,3 @@ public class coordinatorAgent extends Agent{
         super.takeDown();
     }
 }
-
-
-

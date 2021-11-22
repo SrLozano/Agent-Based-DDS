@@ -3,6 +3,7 @@ import jade.core.Agent;
 
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.UnreadableException;
 import weka.classifiers.Evaluation;
 import weka.core.SerializationHelper;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -17,17 +18,23 @@ import java.util.Random;
 import jade.lang.acl.ACLMessage;
 
 
-public abstract class classification extends Behaviour { //això de abstract s'ha de treure però de moment
+public class Classification extends OneShotBehaviour { //això de abstract s'ha de treure però de moment
     //ho deixem pk si no dona error
-    private int state = 1; //nse si serà un número o què, pensarho bé
 
-    public void classification() throws Exception { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
-        switch (state) { //fer un switch on els 2 cases siguin: training+validation?? i test (amb les instances q passa el user)
-
-            case 1: //training
+    public void action() { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
+        try{
+                // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
                 ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
                 if (msg.getPerformative() == ACLMessage.INFORM) {
-                    Object train_obj = msg.getContentObject();
+                    Object train_obj = null;
+
+                    try {
+                        train_obj = msg.getContentObject();
+                    } catch (UnreadableException e) {
+
+                        e.printStackTrace();
+                    }
+                    System.out.println(train_obj.getClass().getSimpleName());
                     Instances trainval = (Instances) train_obj; //Puede que dé error, comprobar que funcione
                     ACLMessage reply = msg.createReply();
                     if (trainval.getClass() == Instances.class) {
@@ -74,14 +81,14 @@ public abstract class classification extends Behaviour { //això de abstract s'h
                         Evaluation eval = new Evaluation(validation);
                         eval.evaluateModel(classifier, validation);
                         System.out.println((eval.correct() / validation.numInstances()) * 100);
+
                         //la idea seria aquí guardar la performance en la validació i utilitzar-la després per a ponderar
                         //el resultat del given classifier (com pesos) per la decisio
 
                     }
                 }
-                break;
 
-            default: // Default is used like the else statement
+            /*default: // Default is used like the else statement
                 // testing new instances
                 //ara la datasource canvia a les 15 instances que entra l'usuari, mirar com fer-ho
                 System.out.println("Classifying new set of 15 instances");
@@ -89,7 +96,10 @@ public abstract class classification extends Behaviour { //això de abstract s'h
                 //maybe no cal guardar el tree en un file???
                 J48 treeClassifier = (J48) SerializationHelper.read(new FileInputStream(System.getProperty("user.dir") + "/classifier.model"));
                 //això està per acabar
-                break;
+                break;*/
+        }
+        catch (Exception e){
+            System.out.println("F");
         }
     }
 }

@@ -67,13 +67,7 @@ public class SplitInputInstances extends CyclicBehaviour {
                         Instances test = new Instances (splittest, 0, 300);
                         System.out.println(test.size());
 
-
-
-
-
-
                         count = count+1;
-
                     }
 
                 } else {
@@ -81,14 +75,13 @@ public class SplitInputInstances extends CyclicBehaviour {
                     reply.setContent("The message content is not instance class");
                 }
                 myAgent.send(reply);
-
             }
         }
 
         catch (Exception e) {
             //añadir más adelante un reinsert path si salta error
             e.printStackTrace();
-            System.out.println("An error occured");
+            System.out.println("An error happened");
         }
     }
 

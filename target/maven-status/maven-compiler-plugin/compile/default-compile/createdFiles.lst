@@ -3,6 +3,7 @@ urv/imas/protocols/ContractNetInitiatorAgent$1.class
 urv/imas/behaviours/TimeAgent.class
 urv/imas/PingAgent.class
 behaviours/trainClassifiers.class
+behaviours/Classification.class
 urv/imas/protocols/ParallelContractNetResponderAgent.class
 urv/imas/protocols/ContractNetResponderAgent$1.class
 urv/imas/protocols/FIPARequestResponderAgent.class
@@ -17,11 +18,9 @@ urv/imas/protocols/BrokerAgent$1.class
 urv/imas/behaviours/ComplexBehaviourAgent.class
 urv/imas/PingAgent$WaitPingAndReplyBehaviour.class
 urv/imas/behaviours/FSMAgent.class
-behaviours/classification.class
 behaviours/WaitInputInstances.class
 urv/imas/behaviours/SimpleAgent.class
 urv/imas/protocols/FIPARequestInitiatorAgent.class
-agents/testing_classifierAgent.class
 urv/imas/behaviours/FSMAgent$1.class
 urv/imas/behaviours/SimpleAgent$FourStepBehaviour.class
 urv/imas/behaviours/ComplexBehaviourAgent$1.class

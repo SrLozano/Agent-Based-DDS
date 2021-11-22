@@ -1,6 +1,6 @@
 package agents;
 
-import behaviours.classification;
+import behaviours.Classification;
 import jade.core.*;
 import jade.core.behaviours.*;
 import jade.core.Agent;
@@ -9,7 +9,6 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
-import
 
 
 public class classifierAgent extends Agent{
@@ -32,17 +31,7 @@ public class classifierAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
-            addBehaviour(new classification() {
-                @Override
-                public void action() {
-
-                }
-
-                @Override
-                public boolean done() {
-                    return false;
-                }
-            });
+            this.addBehaviour(new Classification());
         }
         catch (FIPAException fe) {
             System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");
