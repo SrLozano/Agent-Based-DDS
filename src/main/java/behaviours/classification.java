@@ -14,60 +14,74 @@ import weka.filters.Filter;
 
 import java.io.FileInputStream;
 import java.util.Random;
+import jade.lang.acl.ACLMessage;
+
 
 public abstract class classification extends Behaviour { //això de abstract s'ha de treure però de moment
     //ho deixem pk si no dona error
-    private int phase = 1; //nse si serà un número o què, pensarho bé
+    private int state = 1; //nse si serà un número o què, pensarho bé
 
-    public void classification(DataSource source) throws Exception { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
-        switch (phase) { //fer un switch on els 2 cases siguin: training+validation?? i test (amb les instances q passa el user)
+    public void classification() throws Exception { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
+        switch (state) { //fer un switch on els 2 cases siguin: training+validation?? i test (amb les instances q passa el user)
 
             case 1: //training
-                System.out.println("Classifier being trained");
-                double percentage = 25; //25% a validació
-                if (source != null) {
-                    System.out.println("Read");
-                    Instances data = source.getDataSet();
-                    Random random = new Random(42);
-                    data.randomize(random);
+                ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
+                if (msg.getPerformative() == ACLMessage.INFORM) {
+                    Object train_obj = msg.getContentObject();
+                    Instances trainval = (Instances) train_obj; //Puede que dé error, comprobar que funcione
+                    ACLMessage reply = msg.createReply();
+                    if (trainval.getClass() == Instances.class) {
+                        System.out.println("-" + myAgent.getLocalName());
 
-                    // Split between train and validation for coord agent
-                    RemovePercentage rp = new RemovePercentage();
-                    rp.setInputFormat(data);
-                    rp.setPercentage(percentage);
-                    Instances train = Filter.useFilter(data, rp);
+                        //We reply to the user that the message has been received
+                        reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
+                        reply.setContent("The training data has been received");
 
-                    RemovePercentage rp_validation = new RemovePercentage();
-                    rp_validation.setInputFormat(data);
-                    rp_validation.setPercentage(percentage);
-                    rp_validation.setInvertSelection(true);
 
-                    Instances validation = Filter.useFilter(data, rp_validation);
+                        System.out.println("Classifier being trained");
 
-                    // Setting class attribute if the data format does not provide this information
-                    if (train.classIndex() == -1) {
-                        train.setClassIndex(train.numAttributes() - 1);
+                        double percentage = 25; //25% a validació
+                        System.out.println("Read");
+                        Random random = new Random(42);
+                        trainval.randomize(random);
+                        // Split between train and validation for coord agent
+                        RemovePercentage rp = new RemovePercentage();
+                        rp.setInputFormat(trainval);
+                        rp.setPercentage(percentage);
+                        Instances train = Filter.useFilter(trainval, rp);
+
+                        RemovePercentage rp_validation = new RemovePercentage();
+                        rp_validation.setInputFormat(trainval);
+                        rp_validation.setPercentage(percentage);
+                        rp_validation.setInvertSelection(true);
+
+                        Instances validation = Filter.useFilter(trainval, rp_validation);
+                        // Setting class attribute if the data format does not provide this information
+                        if (train.classIndex() == -1) {
+                            train.setClassIndex(train.numAttributes() - 1);
+                        }
+                        // Setting class attribute if the data format does not provide this information
+                        if (validation.classIndex() == -1) {
+                            validation.setClassIndex(validation.numAttributes() - 1);
+                        }
+
+                        // Train classifier and save it for testing
+                        J48 classifier = new J48();
+                        classifier.buildClassifier(train);
+                        weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier.model", classifier);
+
+                        // Validate classifier for testing
+                        Evaluation eval = new Evaluation(validation);
+                        eval.evaluateModel(classifier, validation);
+                        System.out.println((eval.correct() / validation.numInstances()) * 100);
+                        //la idea seria aquí guardar la performance en la validació i utilitzar-la després per a ponderar
+                        //el resultat del given classifier (com pesos) per la decisio
+
                     }
-                    // Setting class attribute if the data format does not provide this information
-                    if (validation.classIndex() == -1) {
-                        validation.setClassIndex(validation.numAttributes() - 1);
-                    }
-
-                    // Train classifier and save it for testing
-                    J48 classifier = new J48();
-                    classifier.buildClassifier(train);
-                    weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier.model", classifier);
-
-                    // Validate classifier for testing
-                    Evaluation eval = new Evaluation(validation);
-                    eval.evaluateModel(classifier, validation);
-                    System.out.println((eval.correct() / validation.numInstances()) * 100);
-                    //la idea seria aquí guardar la performance en la validació i utilitzar-la després per a ponderar
-                    //el resultat del given classifier (com pesos) per la decisió final
                 }
                 break;
 
-            case 2:
+            default: // Default is used like the else statement
                 // testing new instances
                 //ara la datasource canvia a les 15 instances que entra l'usuari, mirar com fer-ho
                 System.out.println("Classifying new set of 15 instances");

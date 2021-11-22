@@ -3,6 +3,14 @@ package behaviours;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.Runtime;
+import jade.core.AID;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
+import jade.lang.acl.ACLMessage;
+
+
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
@@ -34,36 +42,59 @@ public class trainClassifiers extends OneShotBehaviour{
                             {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
                     };
 
-            for (String[] indices : allarrays) { //Al ponerlo String[]
-                int [] indecesInstancesToTrain = new int [7]; // combinando ambas declaraciones en una
 
-                for (int i = 0; i<indices.length; ++i) {
+            // Get a hold on JADE runtime
+            Runtime rt = Runtime.instance();
+            // Exit the JVM when there are no more containers around
+            rt.setCloseVM(true);
+            // Creating a new profile
+            Profile p = new ProfileImpl(true);
+            p.setParameter(Profile.MAIN_HOST, "localhost");
+            p.setParameter(Profile.GUI, "true");
+            // Creating a main container for the ClassifierAgents
+            ContainerController ac = rt.createMainContainer(p);
+
+            int count = 1;
+            //Starting a loop 'for' for each of the packages that has to be sent to the classifier agents
+            for (String[] indices : allarrays) {
+                int[] indecesInstancesToTrainVal = new int[7]; // combinando ambas declaraciones en una
+
+                for (int i = 0; i < indices.length; ++i) {
                     Attribute att = data.attribute(indices[i]);
-                    indecesInstancesToTrain [i] = att.index();
+                    indecesInstancesToTrainVal[i] = att.index(); //we add the attribute index to the list of attributes to select
                 }
 
                 Remove removeFilter = new Remove();
-                removeFilter.setAttributeIndicesArray(indecesInstancesToTrain);
+                removeFilter.setAttributeIndicesArray(indecesInstancesToTrainVal);
                 removeFilter.setInvertSelection(true);
                 removeFilter.setInputFormat(data);
-                Instances splittrain = Filter.useFilter(data, removeFilter);
+                Instances splittrainval = Filter.useFilter(data, removeFilter);
 
                 //shuffle of the instances
                 Randomize randomize = new Randomize();
-                randomize.setInputFormat(splittrain);
+                randomize.setInputFormat(splittrainval);
 
-                Instances train = new Instances (splittrain, 0, 300);
-                System.out.println(train.size());
+                Instances trainval = new Instances(splittrainval, 0, 300);
+                System.out.println(trainval.size());
+                AgentController anotherAgent;
+                try {
+                    //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
+                    anotherAgent = ac.createNewAgent("classifier" + count, "agents.classifierAgent", null);
+                    anotherAgent.start();
+                } catch (StaleProxyException e) {
+                    e.printStackTrace();
+                }
 
-                //aquí pasar train a cada classifier generado
-                Profile p = new ProfileImpl(true);
-                //ac.getLocation();
-                //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
-                //anotherAgent = ac.createNewAgent("classifier"+count, "classifierAgent");
+                ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                msg.setContentObject(trainval); //The content of the message it's the data
+                AID dest = new AID("classifier" + count, AID.ISLOCALNAME);
+                msg.addReceiver(dest); //The receiver is the coordinator Agent
+                myAgent.send(msg); //The message is sent
 
-                //anotherAgent.start();
-                //count = count+1;
+                count = count + 1;
             }
+
+
         }
         catch (Exception e) {
             System.out.println("F");
