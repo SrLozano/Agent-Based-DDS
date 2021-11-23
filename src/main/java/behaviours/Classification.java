@@ -18,10 +18,9 @@ import java.util.Random;
 import jade.lang.acl.ACLMessage;
 
 
-public class Classification extends OneShotBehaviour { //això de abstract s'ha de treure però de moment
-    //ho deixem pk si no dona error
+public class Classification extends OneShotBehaviour {
 
-    public void action() { //rep el datasource del coordinator, però maybe millor que rebi Isntances?
+    public void action() {
         try{
                 // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
                 ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()

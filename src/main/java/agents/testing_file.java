@@ -1,5 +1,7 @@
 package agents;
 
+import jade.core.AID;
+import jade.lang.acl.ACLMessage;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
@@ -51,15 +53,25 @@ class testing_file {
                 }
 
                 // An instance is passed to a classifier if it contains all the attributes for that particular instance
+                int l=1; //classifier counter
                 for (String[] attributes : allarrays){
-
                     // Lists are created to use containsAll function
                     List<Integer> nameList = new ArrayList (Arrays.asList(names));
                     List<Integer> attributesList = new ArrayList (Arrays.asList(attributes));
 
                     if (nameList.containsAll(attributesList)) {
+                        System.out.println(l);
+                        /*
                         System.out.println("The firm is sent to correspondent classifier");
+                        //Send the agent with all the attributes the instance
+                        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                        msg.setContentObject(aux); //The content of the message it's the firm data in array form
+                        AID dest = new AID("classifier" + l, AID.ISLOCALNAME);
+                        msg.addReceiver(dest); //The receiver is the coordinator Agent
+                        myAgent.send(msg); //The message is sent
+                        */
                     }
+                    l+=1;
                 }
             }
         }
