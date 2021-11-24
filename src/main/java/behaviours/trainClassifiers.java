@@ -23,6 +23,7 @@ public class trainClassifiers extends OneShotBehaviour{
 
     public void action() {
         try {
+            //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "train_file.arff");
             Instances data = source.getDataSet();
 

@@ -2,6 +2,7 @@ package agents;
 
 import behaviours.SplitInputInstances;
 import behaviours.trainClassifiers;
+import behaviours.votingSystem;
 import jade.core.*;
 import jade.core.behaviours.*;
 import jade.core.Agent;
@@ -28,8 +29,9 @@ public class coordAgent extends Agent{
         try {
             DFService.register(this, dfd );
             System.out.println("["+getLocalName()+"]:"+"DF Registered");
-            //addBehaviour(new SplitInputInstances());
+            addBehaviour(new SplitInputInstances());
             addBehaviour(new trainClassifiers());
+            addBehaviour(new votingSystem());
         }
         catch (FIPAException fe) {
             System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");
