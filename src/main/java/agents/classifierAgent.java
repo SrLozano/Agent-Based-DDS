@@ -1,8 +1,7 @@
 package agents;
 
-import behaviours.Classification;
-import jade.core.*;
-import jade.core.behaviours.*;
+import behaviours.classifyInstance;
+import behaviours.trainClassifiers;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.Property;
@@ -10,9 +9,16 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 
-
 public class classifierAgent extends Agent{
+    private String name;
+    private Double performance;
+
     protected void setup(){
+
+        /* This is for setting arguments in the constructor*/
+        Object[] args = getArguments();
+        this.name = (String) args[0]; // this returns the String 1
+
         // Register petition
         DFAgentDescription dfd = new DFAgentDescription();
 
@@ -31,7 +37,9 @@ public class classifierAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
-            this.addBehaviour(new Classification());
+            this.addBehaviour(new trainClassifiers(this));
+            this.addBehaviour(new classifyInstance(this));
+
         }
         catch (FIPAException fe) {
             System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");
@@ -46,5 +54,23 @@ public class classifierAgent extends Agent{
         }
         super.takeDown();
     }
+
+    /* Setters & Getters */
+    public void setNameAgent(String name){
+        this.name = name;
+    }
+
+    public String getNameAgent(){
+        return this.name;
+    }
+
+    public void setPerformance(double performance){
+        this.performance = performance;
+    }
+
+    public Double getPerformance(){
+        return performance;
+    }
+
 }
 

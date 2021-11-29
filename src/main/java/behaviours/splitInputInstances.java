@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SplitInputInstances extends CyclicBehaviour {
+public class splitInputInstances extends CyclicBehaviour {
 
     public void action () {
         try {

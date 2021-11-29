@@ -1,10 +1,8 @@
 package agents;
 
-import behaviours.SplitInputInstances;
-import behaviours.trainClassifiers;
+import behaviours.splitInputInstances;
+import behaviours.sendTrainingInstances;
 import behaviours.votingSystem;
-import jade.core.*;
-import jade.core.behaviours.*;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -12,7 +10,9 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 
 public class coordAgent extends Agent{
+
     protected void setup(){
+
         // Register petition
         DFAgentDescription dfd = new DFAgentDescription();
 
@@ -29,8 +29,8 @@ public class coordAgent extends Agent{
         try {
             DFService.register(this, dfd );
             System.out.println("["+getLocalName()+"]:"+"DF Registered");
-            addBehaviour(new SplitInputInstances());
-            addBehaviour(new trainClassifiers());
+            addBehaviour(new splitInputInstances());
+            addBehaviour(new sendTrainingInstances());
             addBehaviour(new votingSystem());
         }
         catch (FIPAException fe) {

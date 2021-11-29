@@ -1,104 +1,235 @@
 package behaviours;
-
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.core.Runtime;
+import agents.classifierAgent;
 import jade.core.AID;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
-import jade.lang.acl.ACLMessage;
 
-
-import weka.core.Attribute;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.UnreadableException;
+import weka.classifiers.Evaluation;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
+import weka.classifiers.trees.J48;
+import weka.filters.unsupervised.instance.RemovePercentage;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Remove;
-import weka.filters.unsupervised.instance.Randomize;
 
+import java.util.Random;
+import jade.lang.acl.ACLMessage;
+import java.io.File;  // Import the File class
+import java.io.IOException;  // Import the IOException class to handle errors
+import java.io.FileWriter;   // Import the FileWriter class
 
-public class trainClassifiers extends OneShotBehaviour{
+public class trainClassifiers extends OneShotBehaviour {
+
+    private final classifierAgent myAgent;
+    //constructor del behaviour:
+    public trainClassifiers(classifierAgent classifierAgent) {
+        super(classifierAgent);
+        this.myAgent = classifierAgent;
+    }
 
     public void action() {
-        try {
-            //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
-            ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "train_file.arff");
-            Instances data = source.getDataSet();
+        try{
+                // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
+                ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
 
-            String[][] allarrays = // Es pot fer amb això: public class RandomSubset, no cal generar nosaltres la llista manually
-                    {
-                            {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},
-                            {"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK", "Risk"},
-                            {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"},
-                            {"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk", "Risk"},
-                            {"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F", "Risk"},
-                            {"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score", "Risk"},
-                            {"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk", "Risk"},
-                            {"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk", "Risk"},
-                            {"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK", "Risk"},
-                            {"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk", "Risk"},
-                            {"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk", "Risk"},
-                            {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
-                    };
+                int count = 3;     //Suponemos que lo recibimos en un mensaje!!!!
+                //idealmente lo cogemos del agent
 
+            if (msg.getPerformative() == ACLMessage.INFORM) {
+                    Object train_obj = null;
 
-            // Get a hold on JADE runtime
-            Runtime rt = Runtime.instance();
-            // Exit the JVM when there are no more containers around
-            rt.setCloseVM(true);
-            // Creating a new profile
-            Profile p = new ProfileImpl(true);
-            p.setParameter(Profile.MAIN_HOST, "localhost");
-            p.setParameter(Profile.GUI, "true");
-            // Creating a main container for the ClassifierAgents
-            ContainerController ac = rt.createMainContainer(p);
+                    try {
+                        train_obj = msg.getContentObject();
+                    } catch (UnreadableException e) {
 
-            int count = 1;
-            //Starting a loop 'for' for each of the packages that has to be sent to the classifier agents
-            for (String[] indices : allarrays) {
-                int[] indecesInstancesToTrainVal = new int[7]; // combinando ambas declaraciones en una
+                        e.printStackTrace();
+                    }
+                    System.out.println(train_obj.getClass().getSimpleName());
+                    Instances trainval = (Instances) train_obj; //Puede que dé error, comprobar que funcione
+                    ACLMessage reply = msg.createReply();
+                    if (trainval.getClass() == Instances.class) {
+                        System.out.println("-" + myAgent.getLocalName());
 
-                for (int i = 0; i < indices.length; ++i) {
-                    Attribute att = data.attribute(indices[i]);
-                    indecesInstancesToTrainVal[i] = att.index(); //we add the attribute index to the list of attributes to select
+                        //We reply to the user that the message has been received
+                        reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
+                        reply.setContent("The training data has been received");
+
+                        System.out.println("Classifier being trained");
+
+                        double percentage = 25; //25% a validació
+                        System.out.println("Read");
+                        Random random = new Random(42);
+                        trainval.randomize(random);
+                        // Split between train and validation for coord agent
+                        RemovePercentage rp = new RemovePercentage();
+                        rp.setInputFormat(trainval);
+                        rp.setPercentage(percentage);
+                        Instances train = Filter.useFilter(trainval, rp); //te quedas con el 75% de las 300 para train
+
+                        RemovePercentage rp_validation = new RemovePercentage();
+                        rp_validation.setInputFormat(trainval);
+                        rp_validation.setPercentage(percentage);
+                        rp_validation.setInvertSelection(true);
+                        Instances validation = Filter.useFilter(trainval, rp_validation); //invertselection se quedan con el 25% para validation
+
+                        // Setting class attribute if the data format does not provide this information
+                        if (train.classIndex() == -1) {
+                            train.setClassIndex(train.numAttributes() - 1);
+                        }
+                        // Setting class attribute if the data format does not provide this information
+                        if (validation.classIndex() == -1) {
+                            validation.setClassIndex(validation.numAttributes() - 1);
+                        }
+
+                        // Train classifier and save it for testing
+                        J48 classifier = new J48();
+                        classifier.buildClassifier(train);
+
+                        AID id = new AID("YourAgentName", AID.ISLOCALNAME);
+
+                        weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier" + count + ".model", classifier);
+
+                        // Validate classifier for testing
+                        Evaluation eval = new Evaluation(validation);
+                        eval.evaluateModel(classifier, validation);
+                        double performance = (eval.correct() / validation.numInstances()) * 100;
+
+                        // Setting class atributes for classifier
+                        this.myAgent.setNameAgent(System.getProperty("user.dir") + "/classifier" + count);
+                        this.myAgent.setPerformance(performance);
+
+                        /*Create file for permormance. MOST LIKELY TO BE ERASED*/
+                        File myObj = new File(System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
+
+                        try {
+                            FileWriter myWriter = new FileWriter(System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
+                            myWriter.write(Double.toString(performance));
+                            myWriter.close();
+                        } catch (IOException e) {
+                            System.out.println("An error occurred while generating file for " + System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
-                Remove removeFilter = new Remove();
-                removeFilter.setAttributeIndicesArray(indecesInstancesToTrainVal);
-                removeFilter.setInvertSelection(true);
-                removeFilter.setInputFormat(data);
-                Instances splittrainval = Filter.useFilter(data, removeFilter);
-
-                //shuffle of the instances
-                Randomize randomize = new Randomize();
-                randomize.setInputFormat(splittrainval);
-
-                Instances trainval = new Instances(splittrainval, 0, 300);
-                AgentController anotherAgent;
-                try {
-                    //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
-                    anotherAgent = ac.createNewAgent("classifier" + count, "agents.classifierAgent", null);
-                    anotherAgent.start();
-                } catch (StaleProxyException e) {
-                    e.printStackTrace();
-                }
-
-                ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                msg.setContentObject(trainval); //The content of the message it's the data
-                AID dest = new AID("classifier" + count, AID.ISLOCALNAME);
-                msg.addReceiver(dest); //The receiver is the coordinator Agent
-                myAgent.send(msg); //The message is sent
-
-                count = count + 1;
-            }
-
-
+            /*default: // Default is used like the else statement
+                // testing new instances
+                //ara la datasource canvia a les 15 instances que entra l'usuari, mirar com fer-ho
+                System.out.println("Classifying new set of 15 instances");
+                // Loading an already saved tree for classifier agents
+                //maybe no cal guardar el tree en un file???
+                J48 treeClassifier = (J48) SerializationHelper.read(new FileInputStream(System.getProperty("user.dir") + "/classifier.model"));
+                //això està per acabar
+                break;*/
         }
-        catch (Exception e) {
-            System.out.println("E");
-            e.printStackTrace();
+        catch (Exception e){
+            System.out.println("F");
         }
     }
 }
+
+/*
+        public static void agents.main (String[]args) throws Exception {
+
+
+            if (source != null) {
+                System.out.println("Read");
+
+                Instances data = source.getDataSet();
+                Random random = new Random(42);
+                data.randomize(random);
+
+                // Split between train and validation for coord agent
+                RemovePercentage rp = new RemovePercentage();
+                rp.setInputFormat(data);
+                rp.setPercentage(percentage);
+
+                Instances train = Filter.useFilter(data, rp);
+
+                RemovePercentage rp_validation = new RemovePercentage();
+                rp_validation.setInputFormat(data);
+                rp_validation.setPercentage(percentage);
+                rp_validation.setInvertSelection(true);
+
+                Instances validation = Filter.useFilter(data, rp_validation);
+
+                System.out.println("Train instances");
+                System.out.println(train.numInstances());
+
+
+                System.out.println("Test instances");
+                System.out.println(validation.numInstances());
+
+                // Setting class attribute if the data format does not provide this information
+                if (train.classIndex() == -1) {
+                    train.setClassIndex(train.numAttributes() - 1);
+                }
+                // Setting class attribute if the data format does not provide this information
+                if (validation.classIndex() == -1) {
+                    validation.setClassIndex(validation.numAttributes() - 1);
+                }
+
+
+                // Train classifier and save it for testing
+                J48 classifier = new J48();
+                classifier.buildClassifier(train);
+                weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier.model", classifier);
+
+
+                // Validate classifier
+                Evaluation eval = new Evaluation(validation);
+                eval.evaluateModel(classifier, validation);
+                System.out.println((eval.correct() / validation.numInstances()) * 100);
+                //la idea seria aquí guardar la performance en la validació i utilitzar-la després per a ponderar
+                //el resultat del given classifier (com pesos) per la decisió final
+
+
+                // Loading an already saved tree for classifier agents
+                //maybe no cal guardar el tree en un file???
+                J48 treeClassifier = (J48) SerializationHelper.read(new FileInputStream(System.getProperty("user.dir") + "/classifier.model"));
+
+                Evaluation eval2 = new Evaluation(test);
+                eval2.evaluateModel(treeClassifier, test);
+                System.out.println((eval2.correct() / test.numInstances()) * 100);
+
+                // Split data into only 6 attributes
+
+                // The array of arrays that defines the index of the attributes for each classifier
+                // All of them have index 24 as it is the class
+                int[][] allarrays = {
+                        {0, 4, 8, 12, 16, 20, 24},
+                        {1, 5, 9, 13, 12, 21, 24},
+                        {2, 6, 10, 14, 18, 22, 24},
+                        {3, 7, 11, 15, 19, 23, 24},
+                        {0, 2, 8, 10, 16, 18, 24},
+                        {1, 3, 9, 11, 17, 19, 24},
+                        {4, 6, 12, 14, 20, 22, 24},
+                        {5, 7, 13, 15, 21, 23, 24},
+                        {0, 5, 8, 13, 16, 21, 24},
+                        {1, 4, 9, 12, 17, 20, 24},
+                        {2, 7, 10, 15, 18, 23, 24},
+                        {3, 6, 11, 14, 19, 22, 24},
+                };
+
+                // Each loop in the for loop represents one classifier
+                int count = 0;
+                for (int[] indices : allarrays) {
+                    Remove removeFilter = new Remove();
+                    removeFilter.setAttributeIndicesArray(indices);
+                    removeFilter.setInvertSelection(true);
+                    removeFilter.setInputFormat(train);
+                    Instances splittrain = Filter.useFilter(train, removeFilter);
+                    removeFilter.setInputFormat(test);
+                    Instances splittest = Filter.useFilter(test, removeFilter);
+
+                    // Train and test classifier
+                    J48 splitclassifier = new J48();
+                    splitclassifier.buildClassifier(splittrain);
+                    //weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier.model", classifier);
+
+                    Evaluation eval3 = new Evaluation(splittest);
+                    eval3.evaluateModel(splitclassifier, splittest);
+                    System.out.println("spliteval " + count + ' ' + (eval3.correct() / splittest.numInstances()) * 100);
+                    count += 1;
+                }
+            }
+        }
+*/
