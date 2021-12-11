@@ -6,6 +6,7 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import behaviours.WaitInputInstances;
+import agents.coordAgent;
 
 public class userAgent extends Agent{
     protected void setup(){
@@ -26,7 +27,10 @@ public class userAgent extends Agent{
         try {
             DFService.register(this, dfd);
             System.out.println("["+getLocalName()+"]:"+"DF Registered");
-            addBehaviour(new WaitInputInstances());
+
+            // TODO: Finish THIS.   WE NEED TO ENTER A COORDINATOR AGENT IN HERE
+            //addBehaviour(new WaitInputInstances());
+
         } catch (jade.domain.FIPAException e) {
             System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");
             doDelete();

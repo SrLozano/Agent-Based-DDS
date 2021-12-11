@@ -63,43 +63,44 @@
                                 <argument>-agents</argument>
                                 <argument>userAgent:agents.userAgent</argument>
                                 <argument>coordAgent:agents.coordAgent</argument>
+                                <!-- TODO: revisar lo de crear aqui el classifier -->
                                 <argument>classifierAgent:agents.classifierAgent</argument>
-                            </arguments>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+                             </arguments>
+                         </configuration>
+                     </plugin>
+                 </plugins>
+             </build>
+         </profile>
+     </profiles>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+     <properties>
+         <maven.compiler.source>8</maven.compiler.source>
+         <maven.compiler.target>8</maven.compiler.target>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.tilab.jade</groupId>
-            <artifactId>jade</artifactId>
-            <version>4.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tilab.jade</groupId>
-            <artifactId>jade-test-suite</artifactId>
-            <version>1.13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.32</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.32</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
+     <dependencies>
+         <dependency>
+             <groupId>com.tilab.jade</groupId>
+             <artifactId>jade</artifactId>
+             <version>4.5.0</version>
+         </dependency>
+         <dependency>
+             <groupId>com.tilab.jade</groupId>
+             <artifactId>jade-test-suite</artifactId>
+             <version>1.13.0</version>
+         </dependency>
+         <dependency>
+             <groupId>org.slf4j</groupId>
+             <artifactId>slf4j-api</artifactId>
+             <version>1.7.32</version>
+         </dependency>
+         <dependency>
+             <groupId>org.slf4j</groupId>
+             <artifactId>slf4j-simple</artifactId>
+             <version>1.7.32</version>
+         </dependency>
+         <!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
         <dependency>
             <groupId>nz.ac.waikato.cms.weka</groupId>
             <artifactId>weka-stable</artifactId>

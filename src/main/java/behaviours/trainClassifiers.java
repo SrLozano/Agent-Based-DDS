@@ -19,7 +19,8 @@ import java.io.FileWriter;   // Import the FileWriter class
 public class trainClassifiers extends OneShotBehaviour {
 
     private final classifierAgent myAgent;
-    //constructor del behaviour:
+
+    // Constructor of the behaviour
     public trainClassifiers(classifierAgent classifierAgent) {
         super(classifierAgent);
         this.myAgent = classifierAgent;
@@ -30,50 +31,57 @@ public class trainClassifiers extends OneShotBehaviour {
                 // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
                 ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
 
-                int count = 3;     //Suponemos que lo recibimos en un mensaje!!!!
-                //idealmente lo cogemos del agent
+                // We select the count from the classifierAgent attributes. Format: classifier-2
+                int count = Integer.parseInt(myAgent.getNameAgent().split("-")[1]);
 
             if (msg.getPerformative() == ACLMessage.INFORM) {
                     Object train_obj = null;
 
+                    // Get the instances to train from the message
                     try {
                         train_obj = msg.getContentObject();
                     } catch (UnreadableException e) {
-
                         e.printStackTrace();
                     }
-                    System.out.println(train_obj.getClass().getSimpleName());
-                    Instances trainval = (Instances) train_obj; //Puede que dé error, comprobar que funcione
+
+                    //System.out.println(train_obj.getClass().getSimpleName());
+                    Instances trainval = (Instances) train_obj;
                     ACLMessage reply = msg.createReply();
+
+                    // WHY THIS IF????? TODO: Please someone explains this better
                     if (trainval.getClass() == Instances.class) {
                         System.out.println("-" + myAgent.getLocalName());
 
-                        //We reply to the user that the message has been received
+                        // We reply to the user that the message has been received
                         reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
                         reply.setContent("The training data has been received");
 
                         System.out.println("Classifier being trained");
 
-                        double percentage = 25; //25% a validació
+                        double percentage = 25; // Percentage to validation purposes
+
                         System.out.println("Read");
                         Random random = new Random(42);
                         trainval.randomize(random);
-                        // Split between train and validation for coord agent
+
+                        // Split between train and validation
                         RemovePercentage rp = new RemovePercentage();
                         rp.setInputFormat(trainval);
                         rp.setPercentage(percentage);
-                        Instances train = Filter.useFilter(trainval, rp); //te quedas con el 75% de las 300 para train
+                        Instances train = Filter.useFilter(trainval, rp); // 100 - percentage for  training
 
                         RemovePercentage rp_validation = new RemovePercentage();
                         rp_validation.setInputFormat(trainval);
                         rp_validation.setPercentage(percentage);
+                        // With InvertSelection percentage for validation
                         rp_validation.setInvertSelection(true);
-                        Instances validation = Filter.useFilter(trainval, rp_validation); //invertselection se quedan con el 25% para validation
+                        Instances validation = Filter.useFilter(trainval, rp_validation);
 
                         // Setting class attribute if the data format does not provide this information
                         if (train.classIndex() == -1) {
                             train.setClassIndex(train.numAttributes() - 1);
                         }
+
                         // Setting class attribute if the data format does not provide this information
                         if (validation.classIndex() == -1) {
                             validation.setClassIndex(validation.numAttributes() - 1);
@@ -83,34 +91,27 @@ public class trainClassifiers extends OneShotBehaviour {
                         J48 classifier = new J48();
                         classifier.buildClassifier(train);
 
-                        AID id = new AID("YourAgentName", AID.ISLOCALNAME);
-
-                        weka.core.SerializationHelper.write(System.getProperty("user.dir") + "/classifier" + count + ".model", classifier);
+                        // With our agent's name got from the attribute of its class
+                        AID id = new AID(myAgent.getNameAgent(), AID.ISLOCALNAME);
 
                         // Validate classifier for testing
                         Evaluation eval = new Evaluation(validation);
                         eval.evaluateModel(classifier, validation);
                         double performance = (eval.correct() / validation.numInstances()) * 100;
 
-                        // Setting class atributes for classifier
-                        this.myAgent.setNameAgent(System.getProperty("user.dir") + "/classifier" + count);
+                        // Setting class atributes model and performance for classifier
+                        this.myAgent.setModel(classifier); //trained classifier
                         this.myAgent.setPerformance(performance);
-
-                        /*Create file for permormance. MOST LIKELY TO BE ERASED*/
-                        File myObj = new File(System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
-
-                        try {
-                            FileWriter myWriter = new FileWriter(System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
-                            myWriter.write(Double.toString(performance));
-                            myWriter.close();
-                        } catch (IOException e) {
-                            System.out.println("An error occurred while generating file for " + System.getProperty("user.dir") + "/classifierPerformance" + count + ".txt");
-                            e.printStackTrace();
-                        }
                     }
-                }
+            }
+        }
+        catch (Exception e){
+            System.out.println("Model could not be trained correcly");
+        }
+    }
+}
 
-            /*default: // Default is used like the else statement
+/*default: // Default is used like the else statement
                 // testing new instances
                 //ara la datasource canvia a les 15 instances que entra l'usuari, mirar com fer-ho
                 System.out.println("Classifying new set of 15 instances");
@@ -119,12 +120,6 @@ public class trainClassifiers extends OneShotBehaviour {
                 J48 treeClassifier = (J48) SerializationHelper.read(new FileInputStream(System.getProperty("user.dir") + "/classifier.model"));
                 //això està per acabar
                 break;*/
-        }
-        catch (Exception e){
-            System.out.println("F");
-        }
-    }
-}
 
 /*
         public static void agents.main (String[]args) throws Exception {

@@ -52,10 +52,12 @@ public class splitInputInstances extends CyclicBehaviour {
 
                         // Only if the attribute is not missing it gets introduced in the array
                         if (aux[j] != 1000.0) {
-                            names[k] = String.valueOf(firm.attribute(j)).split(" ")[1]; // The attribute vale is introduced
+                            names[k] = String.valueOf(firm.attribute(j)).split(" ")[1]; // The attribute name is introduced
                             k+=1;
                         }
                     }
+
+                    //TODO: (if tiempo) CFP insteadd de iterar por todos los clasifiers para ver si pueden clasificar los atributos
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
                     int l=1; //classifier counter
@@ -63,13 +65,13 @@ public class splitInputInstances extends CyclicBehaviour {
                         // Lists are created to use containsAll function
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
                         List<Integer> attributesList = new ArrayList (Arrays.asList(attributes));
-
+                        //TODO: if classifier busy (not IDLE) wait to send the instance
                         if (nameList.containsAll(attributesList)) {
                             System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
                             msg_to_send.setContentObject(aux); //The content of the message it's the firm data in array form
-                            AID dest = new AID("classifier" + l, AID.ISLOCALNAME);
+                            AID dest = new AID("classifier-" + l, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                             myAgent.send(msg_to_send); //The message is sent
                         }
@@ -80,7 +82,6 @@ public class splitInputInstances extends CyclicBehaviour {
                 //Bloquejar el comportament fins rebre un missatge a la cua
                 block();
             }
-
         }
 
         catch (Exception e) {

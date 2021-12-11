@@ -8,10 +8,14 @@ import jade.domain.FIPAAgentManagement.Property;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import weka.classifiers.trees.J48;
 
 public class classifierAgent extends Agent{
     private String name;
     private Double performance;
+    private J48 model; // File location of the model
+    private String state; // [IDLE, Classifying]
+    private String train_state; // [notTrained, trained]
 
     protected void setup(){
 
@@ -69,7 +73,31 @@ public class classifierAgent extends Agent{
     }
 
     public Double getPerformance(){
-        return performance;
+        return this.performance;
+    }
+
+    public void setModel(J48 model){
+        this.model = model;
+    }
+
+    public J48 getModel(){
+        return this.model;
+    }
+
+    public void setNameState(String state){
+        this.state = state;
+    }
+
+    public String getNameState(){
+        return this.state;
+    }
+
+    public void setTrainState(String train_state){
+        this.train_state = train_state;
+    }
+
+    public String getTrainState(){
+        return this.train_state;
     }
 
 }

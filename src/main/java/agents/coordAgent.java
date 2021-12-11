@@ -11,6 +11,8 @@ import jade.domain.FIPAException;
 
 public class coordAgent extends Agent{
 
+    private String state; // [IDLE, Splitting_train, Splitting_test, Voting]
+
     protected void setup(){
 
         // Register petition
@@ -45,5 +47,15 @@ public class coordAgent extends Agent{
             e.printStackTrace();
         }
         super.takeDown();
+    }
+
+    /* Setters & Getters */
+
+    public void setNameState(String state){
+        this.state = state;
+    }
+
+    public String getNameState(){
+        return this.state;
     }
 }

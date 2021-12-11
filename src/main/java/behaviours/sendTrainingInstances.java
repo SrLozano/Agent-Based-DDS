@@ -26,6 +26,7 @@ public class sendTrainingInstances extends OneShotBehaviour{
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "train_file.arff");
             Instances data = source.getDataSet();
 
+            // TODO: ESTO DE TENER LA LISTA ESTA ES MUY CUTRE. HABRIA QUE GESTIONARLO CON ATRIBUTOS DE LAS CLASES. NO ES PRIORITARIO PERO HABRA QUE HACERLO
             String[][] allarrays = // Es pot fer amb això: public class RandomSubset, no cal generar nosaltres la llista manually
                     {
                             {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},
@@ -78,9 +79,9 @@ public class sendTrainingInstances extends OneShotBehaviour{
                 AgentController anotherAgent;
                 try {
                     //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
-                    anotherAgent = ac.createNewAgent("classifier" + count, "agents.classifierAgent", new String[]{"aitor"});
+                    anotherAgent = ac.createNewAgent("classifier-" + count, "agents.classifierAgent", new String[]{"classifier-" + count});
                     anotherAgent.start();
-                    //anotherAgent.getNameAgent();
+
 
                 } catch (StaleProxyException e) {
                     e.printStackTrace();
@@ -89,7 +90,7 @@ public class sendTrainingInstances extends OneShotBehaviour{
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                 msg.setContentObject(trainval); //The content of the message it's the data
                 AID dest = new AID("classifier" + count, AID.ISLOCALNAME);
-                msg.addReceiver(dest); //The receiver is the coordinator Agent
+                msg.addReceiver(dest); //The receiver is the coordinator Agent. Sure?????
                 myAgent.send(msg); //The message is sent
             }
 
