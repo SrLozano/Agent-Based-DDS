@@ -24,7 +24,7 @@ public class testing_file2{
 
         try{
         //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
-                anotherAgent = ac.createNewAgent("classifier", "agents.coordAgent",null);
+                anotherAgent = ac.createNewAgent("coord1", "agents.coordAgent",null);
                 anotherAgent.start();
         }
         catch (StaleProxyException e) {

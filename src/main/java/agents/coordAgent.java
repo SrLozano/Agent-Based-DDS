@@ -24,8 +24,13 @@ import weka.filters.unsupervised.instance.Randomize;
 import agents.coordAgent;
 
 public class coordAgent extends Agent{
-
-    private String state; // [IDLE, Splitting_train, Splitting_test, Voting]
+    
+    public enum states {
+        SPLITTING_TRAIN,
+        SPLITTING_TEST,
+        VOTING
+    }
+    private states state;
     private int number_classifiers;
 
     protected void setup() {
@@ -37,7 +42,7 @@ public class coordAgent extends Agent{
     
     private void sendTrainingInstances(){
         try {
-            this.state = "Splitting_train";
+            this.state = states.SPLITTING_TRAIN;
             //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
             Instances data = source.getDataSet();
@@ -109,7 +114,7 @@ public class coordAgent extends Agent{
                 this.send(msg); //The message is sent
 
             }
-            this.state = "IDLE";
+            this.state = states.SPLITTING_TEST;
 
         } catch (Exception e) {
             System.out.println("E");
@@ -147,11 +152,11 @@ public class coordAgent extends Agent{
 
     /* Setters & Getters */
 
-    public void setNameState(String state){
+    public void setNameState(states state){
         this.state = state;
     }
 
-    public String getNameState(){
+    public states getNameState(){
         return this.state;
     }
 

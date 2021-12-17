@@ -29,11 +29,15 @@ public class trainClassifiers extends OneShotBehaviour {
     public void action() {
         try{
                 // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
+            System.out.println("Ola");
+
+            block();
                 ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
+                System.out.println("AgentReceivedMessage");
 
                 // We select the count from the classifierAgent attributes. Format: classifier-2
                 int count = Integer.parseInt(myAgent.getNameAgent().split("-")[1]);
-
+                System.out.println(msg.getPerformative());
             if (msg.getPerformative() == ACLMessage.INFORM) {
                     Object train_obj = null;
 
