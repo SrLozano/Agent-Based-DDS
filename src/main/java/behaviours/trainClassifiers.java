@@ -78,14 +78,11 @@ public class trainClassifiers extends OneShotBehaviour {
                         Instances validation = Filter.useFilter(trainval, rp_validation);
 
                         // Setting class attribute if the data format does not provide this information
-                        if (train.classIndex() == -1) {
-                            train.setClassIndex(train.numAttributes() - 1);
-                        }
+                        train.setClassIndex(train.numAttributes() - 1);
 
                         // Setting class attribute if the data format does not provide this information
-                        if (validation.classIndex() == -1) {
-                            validation.setClassIndex(validation.numAttributes() - 1);
-                        }
+                        validation.setClassIndex(validation.numAttributes() - 1);
+
 
                         // Train classifier and save it for testing
                         J48 classifier = new J48();

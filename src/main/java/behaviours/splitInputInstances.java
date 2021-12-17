@@ -1,5 +1,7 @@
 package behaviours;
 
+import agents.classifierAgent;
+import agents.coordAgent;
 import jade.core.*;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -8,12 +10,19 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class splitInputInstances extends CyclicBehaviour {
+
+    private final coordAgent myAgent;
+
+    // Constructor of the behaviour
+    public splitInputInstances(coordAgent coordAgent) {
+        super(coordAgent);
+        this.myAgent = coordAgent;
+    }
 
     public void action () {
         try {
@@ -39,6 +48,7 @@ public class splitInputInstances extends CyclicBehaviour {
                                 {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
                         };
 
+                ;
                 // For every firm in the test file the correspondent classifiers are selected
                 for (int i = 0; i < test_data.size(); i++) {
 
@@ -57,7 +67,7 @@ public class splitInputInstances extends CyclicBehaviour {
                         }
                     }
 
-                    //TODO: (if tiempo) CFP insteadd de iterar por todos los clasifiers para ver si pueden clasificar los atributos
+                    //TODO: (si tenemos tiempo) CFP instead de iterar por todos los classifiers para ver si pueden clasificar los atributos
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
                     int l=1; //classifier counter
@@ -75,6 +85,9 @@ public class splitInputInstances extends CyclicBehaviour {
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                             myAgent.send(msg_to_send); //The message is sent
                         }
+
+                        // Notice that since l starts in 1 it indicates the number of classifiers right after the instances
+                        myAgent.setNumber_classifiers(l);
                         l+=1;
                     }
                 }
