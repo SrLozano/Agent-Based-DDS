@@ -12,6 +12,7 @@ import weka.filters.Filter;
 
 import java.util.Random;
 import jade.lang.acl.ACLMessage;
+
 import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
@@ -27,90 +28,95 @@ public class trainClassifiers extends OneShotBehaviour {
     }
 
     public void action() {
-        try{
-                // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
-            System.out.println("Ola");
+        try {
+            // TODO: How to call the states defined in the coordinator agent?
+            switch (myAgent.getNameState()){ //My agent has to be the coordinator
+                case TRAIN:
+                    // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
+                    System.out.println("Ola");
 
-            block();
-                ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
-                System.out.println("AgentReceivedMessage");
+                    block();
+                    ACLMessage msg = myAgent.receive(); //Another option to receive a message is blockingReceive()
+                    System.out.println("AgentReceivedMessage");
 
-                // We select the count from the classifierAgent attributes. Format: classifier-2
-                int count = Integer.parseInt(myAgent.getNameAgent().split("-")[1]);
-                System.out.println(msg.getPerformative());
-            if (msg.getPerformative() == ACLMessage.INFORM) {
-                    Object train_obj = null;
+                    // We select the count from the classifierAgent attributes. Format: classifier-2
+                    int count = Integer.parseInt(myAgent.getNameAgent().split("-")[1]);
+                    System.out.println(msg.getPerformative());
+                    if (msg.getPerformative() == ACLMessage.INFORM) {
+                        Object train_obj = null;
 
-                    // Get the instances to train from the message
-                    try {
-                        train_obj = msg.getContentObject();
-                    } catch (UnreadableException e) {
-                        e.printStackTrace();
-                    }
+                        // Get the instances to train from the message
+                        try {
+                            train_obj = msg.getContentObject();
+                        } catch (UnreadableException e) {
+                            e.printStackTrace();
+                        }
 
-                    //System.out.println(train_obj.getClass().getSimpleName());
-                    Instances trainval = (Instances) train_obj;
-                    ACLMessage reply = msg.createReply();
+                        //System.out.println(train_obj.getClass().getSimpleName());
+                        Instances trainval = (Instances) train_obj;
+                        ACLMessage reply = msg.createReply();
 
-                    // WHY THIS IF????? TODO: Please someone explains this better
-                    if (trainval.getClass() == Instances.class) {
-                        System.out.println("-" + myAgent.getLocalName());
+                        // WHY THIS IF????? TODO: Please someone explains this better
+                        if (trainval.getClass() == Instances.class) {
+                            System.out.println("-" + myAgent.getLocalName());
 
-                        // We reply to the user that the message has been received
-                        reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
-                        reply.setContent("The training data has been received");
+                            // We reply to the user that the message has been received
+                            reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
+                            reply.setContent("The training data has been received");
 
-                        System.out.println("Classifier being trained");
+                            System.out.println("Classifier being trained");
 
-                        double percentage = 25; // Percentage to validation purposes
+                            double percentage = 25; // Percentage to validation purposes
 
-                        System.out.println("Read");
-                        Random random = new Random(42);
-                        trainval.randomize(random);
+                            System.out.println("Read");
+                            Random random = new Random(42);
+                            trainval.randomize(random);
 
-                        // Split between train and validation
-                        RemovePercentage rp = new RemovePercentage();
-                        rp.setInputFormat(trainval);
-                        rp.setPercentage(percentage);
-                        Instances train = Filter.useFilter(trainval, rp); // 100 - percentage for  training
+                            // Split between train and validation
+                            RemovePercentage rp = new RemovePercentage();
+                            rp.setInputFormat(trainval);
+                            rp.setPercentage(percentage);
+                            Instances train = Filter.useFilter(trainval, rp); // 100 - percentage for  training
 
-                        RemovePercentage rp_validation = new RemovePercentage();
-                        rp_validation.setInputFormat(trainval);
-                        rp_validation.setPercentage(percentage);
-                        // With InvertSelection percentage for validation
-                        rp_validation.setInvertSelection(true);
-                        Instances validation = Filter.useFilter(trainval, rp_validation);
+                            RemovePercentage rp_validation = new RemovePercentage();
+                            rp_validation.setInputFormat(trainval);
+                            rp_validation.setPercentage(percentage);
+                            // With InvertSelection percentage for validation
+                            rp_validation.setInvertSelection(true);
+                            Instances validation = Filter.useFilter(trainval, rp_validation);
 
-                        // Setting class attribute if the data format does not provide this information
-                        train.setClassIndex(train.numAttributes() - 1);
+                            // Setting class attribute if the data format does not provide this information
+                            train.setClassIndex(train.numAttributes() - 1);
 
-                        // Setting class attribute if the data format does not provide this information
-                        validation.setClassIndex(validation.numAttributes() - 1);
+                            // Setting class attribute if the data format does not provide this information
+                            validation.setClassIndex(validation.numAttributes() - 1);
 
 
-                        // Train classifier and save it for testing
-                        J48 classifier = new J48();
-                        classifier.buildClassifier(train);
+                            // Train classifier and save it for testing
+                            J48 classifier = new J48();
+                            classifier.buildClassifier(train);
 
-                        // With our agent's name got from the attribute of its class
-                        AID id = new AID(myAgent.getNameAgent(), AID.ISLOCALNAME);
+                            // With our agent's name got from the attribute of its class
+                            AID id = new AID(myAgent.getNameAgent(), AID.ISLOCALNAME);
 
-                        // Validate classifier for testing
-                        Evaluation eval = new Evaluation(validation);
-                        eval.evaluateModel(classifier, validation);
-                        double performance = (eval.correct() / validation.numInstances()) * 100;
+                            // Validate classifier for testing
+                            Evaluation eval = new Evaluation(validation);
+                            eval.evaluateModel(classifier, validation);
+                            double performance = (eval.correct() / validation.numInstances()) * 100;
 
-                        // Setting class atributes model and performance for classifier
-                        this.myAgent.setModel(classifier); //trained classifier
-                        this.myAgent.setPerformance(performance);
+                            // Setting class atributes model and performance for classifier
+                            this.myAgent.setModel(classifier); //trained classifier
+                            this.myAgent.setPerformance(performance);
+                        }
                     }
             }
         }
-        catch (Exception e){
-            System.out.println("Model could not be trained correcly");
+                catch(Exception e){
+                    System.out.println("Model could not be trained correcly");
+                }
+
         }
     }
-}
 
 /*default: // Default is used like the else statement
                 // testing new instances

@@ -27,7 +27,7 @@ public class splitInputInstances extends CyclicBehaviour {
     public void action () {
         try {
             switch (myAgent.getNameState()) {
-                case SPLITTING_TEST:
+                case TEST:
                     block();
                     ACLMessage msg = myAgent.receive();
 
@@ -102,7 +102,7 @@ public class splitInputInstances extends CyclicBehaviour {
                                 myAgent.setNumber_classifiers(l);
                                 l += 1;
                             }
-                            myAgent.setNameState(coordAgent.states.VOTING);
+                            myAgent.setNameState(coordAgent.global_states.VOTING);
                         }
                     }
 

@@ -25,12 +25,12 @@ import agents.coordAgent;
 
 public class coordAgent extends Agent{
     
-    public enum states {
-        SPLITTING_TRAIN,
-        SPLITTING_TEST,
-        VOTING
+    public enum global_states {
+        TRAIN,
+        TEST,
+        VOTING,
     }
-    private states state;
+    private global_states state;
     private int number_classifiers;
 
     protected void setup() {
@@ -42,7 +42,7 @@ public class coordAgent extends Agent{
     
     private void sendTrainingInstances(){
         try {
-            this.state = states.SPLITTING_TRAIN;
+            this.state = global_states.TRAIN;
             //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
             Instances data = source.getDataSet();
@@ -114,7 +114,7 @@ public class coordAgent extends Agent{
                 this.send(msg); //The message is sent
 
             }
-            this.state = states.SPLITTING_TEST;
+            this.state = global_states.TEST;
 
         } catch (Exception e) {
             System.out.println("E");
@@ -152,11 +152,11 @@ public class coordAgent extends Agent{
 
     /* Setters & Getters */
 
-    public void setNameState(states state){
+    public void setNameState(global_states state){
         this.state = state;
     }
 
-    public states getNameState(){
+    public static global_states getNameState(){
         return this.state;
     }
 
