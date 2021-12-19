@@ -72,7 +72,7 @@ public class classifierAgent extends Agent{
         this.performance = performance;
     }
 
-    public Double getPerformance(){
+    public double getPerformance(){
         return this.performance;
     }
 
