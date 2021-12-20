@@ -1,5 +1,6 @@
 package behaviours;
 import agents.classifierAgent;
+import agents.coordAgent;
 import jade.core.AID;
 
 import jade.core.behaviours.OneShotBehaviour;
@@ -29,11 +30,14 @@ public class trainClassifiers extends OneShotBehaviour {
         this.myAgent = classifierAgent;
     }
 
+
+
     public void action() {
         try {
             // TODO: How to call the states defined in the coordinator agent?
             switch ((String) myAgent.getNameState()){ //My agent has to be the coordinator
                 case "TRAIN":
+
                     // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
                     System.out.println("Ola");
 
