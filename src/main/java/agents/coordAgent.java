@@ -156,7 +156,7 @@ public class coordAgent extends Agent{
         this.state = state;
     }
 
-    public static global_states getNameState(){
+    public global_states getNameState(){
         return this.state;
     }
 
