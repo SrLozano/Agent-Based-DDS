@@ -73,6 +73,8 @@ public class votingSystem extends OneShotBehaviour {
                 if (result >= 0.5){ result = 1; }
                 else { result = 0; }
 
+                System.out.println(result);
+
             default:
                 System.out.println("Agents are not voting yet");
         }

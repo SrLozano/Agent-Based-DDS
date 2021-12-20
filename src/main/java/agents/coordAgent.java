@@ -30,7 +30,7 @@ public class coordAgent extends Agent{
         TEST,
         VOTING,
     }
-    private global_states state;
+    public static global_states state;
     private int number_classifiers;
 
     protected void setup() {
@@ -41,7 +41,9 @@ public class coordAgent extends Agent{
     }
     
     private void sendTrainingInstances(){
+
         try {
+
             this.state = global_states.TRAIN;
             //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
@@ -96,7 +98,9 @@ public class coordAgent extends Agent{
                 randomize.setInputFormat(splittrainval);
 
                 Instances trainval = new Instances(splittrainval, 0, 300);
+
                 AgentController anotherAgent;
+
                 try {
                     //Creating new classifierAgent. First argument is the name. Second argument is the class Agent.
                     anotherAgent = ac.createNewAgent("classifier-" + count, "agents.classifierAgent", new String[]{"classifier-" + count});
@@ -104,17 +108,21 @@ public class coordAgent extends Agent{
 
 
                 } catch (StaleProxyException e) {
+                    System.out.println("Exception");
+
                     e.printStackTrace();
                 }
 
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                 msg.setContentObject(trainval); //The content of the message it's the data
-                AID dest = new AID("classifier" + count, AID.ISLOCALNAME);
+                AID dest = new AID("classifier-" + count, AID.ISLOCALNAME);
+                System.out.println("classifier-" + count+  " AID is " + dest);
                 msg.addReceiver(dest); //The receiver is the classifier
                 this.send(msg); //The message is sent
+                count +=1;
 
             }
-            this.state = global_states.TEST;
+            //this.state = global_states.TEST;
 
         } catch (Exception e) {
             System.out.println("E");
@@ -141,6 +149,7 @@ public class coordAgent extends Agent{
             doDelete();
         }
     }
+
     protected void takeDown() {
         try {
             DFService.deregister(this);

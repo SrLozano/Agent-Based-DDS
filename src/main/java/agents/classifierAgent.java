@@ -1,6 +1,5 @@
 package agents;
 
-import behaviours.classifyInstance;
 import behaviours.trainClassifiers;
 import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -41,9 +40,11 @@ public class classifierAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
-            this.addBehaviour(new trainClassifiers(this));
-            this.addBehaviour(new classifyInstance(this));
+            System.out.println("["+getLocalName()+"]:"+"DF Registered");
+            System.out.println(this.getName());
 
+            this.addBehaviour(new trainClassifiers(this));
+            //this.addBehaviour(new classifyInstance(this));
         }
         catch (FIPAException fe) {
             System.out.println("["+getLocalName()+"]:"+"An error detected while trying to add the DF");

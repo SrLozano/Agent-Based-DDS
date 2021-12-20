@@ -63,8 +63,7 @@
                                 <argument>-agents</argument>
                                 <argument>userAgent:agents.userAgent</argument>
                                 <argument>coordAgent:agents.coordAgent</argument>
-                                <!-- TODO: revisar lo de crear aqui el classifier -->
-                                <argument>classifierAgent:agents.classifierAgent</argument>
+
                              </arguments>
                          </configuration>
                      </plugin>
