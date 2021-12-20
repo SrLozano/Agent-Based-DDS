@@ -17,6 +17,8 @@ import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
 
+import agents.coordAgent;
+
 public class trainClassifiers extends OneShotBehaviour {
 
     private final classifierAgent myAgent;
@@ -30,8 +32,8 @@ public class trainClassifiers extends OneShotBehaviour {
     public void action() {
         try {
             // TODO: How to call the states defined in the coordinator agent?
-            switch (myAgent.getNameState()){ //My agent has to be the coordinator
-                case TRAIN:
+            switch ((String) myAgent.getNameState()){ //My agent has to be the coordinator
+                case "TRAIN":
                     // THIS ACL MESSAGE IS NOT WELL RECEIVED; AND THUS NO FUNCIONA: HAY QUE MIRAR
                     System.out.println("Ola");
 
@@ -111,9 +113,9 @@ public class trainClassifiers extends OneShotBehaviour {
                     }
             }
         }
-                catch(Exception e){
-                    System.out.println("Model could not be trained correcly");
-                }
+            catch(Exception e){
+                System.out.println("Model could not be trained correcly");
+            }
 
         }
     }
