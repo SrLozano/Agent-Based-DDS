@@ -1,9 +1,8 @@
 urv/imas/protocols/FIPARequestInitiatorAgent$1.class
+behaviours/classifiersBehaviour.class
 urv/imas/protocols/ContractNetInitiatorAgent$1.class
-behaviours/trainClassifiers$1.class
 urv/imas/behaviours/TimeAgent.class
 urv/imas/PingAgent.class
-behaviours/trainClassifiers.class
 agents/coordAgent$global_states.class
 urv/imas/protocols/ParallelContractNetResponderAgent.class
 urv/imas/protocols/ContractNetResponderAgent$1.class
@@ -14,6 +13,7 @@ urv/imas/behaviours/FSMAgent$RandomGenerator.class
 urv/imas/protocols/ParallelContractNetResponderAgent$1.class
 urv/imas/behaviours/TimeAgent$1.class
 urv/imas/protocols/ContractNetResponderAgent.class
+behaviours/classifiersBehaviour$1.class
 urv/imas/protocols/BrokerAgent$2.class
 urv/imas/protocols/ParallelContractNetResponderAgent$1$1.class
 urv/imas/protocols/BrokerAgent$1.class

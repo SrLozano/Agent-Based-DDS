@@ -1,17 +1,7 @@
 package agents;
-import java.util.Scanner;
 
-import behaviours.splitInputInstances;
-import behaviours.trainClassifiers;
-import behaviours.votingSystem;
 import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.FSMBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import behaviours.WaitInputInstances;
-import agents.coordAgent;
 
 public class TestFSMAgent extends Agent{
     private static final String TrainingClassifiers = "TrainingClassifiers";

@@ -61,9 +61,8 @@
                             <arguments>
                                 <argument>-gui</argument>
                                 <argument>-agents</argument>
-                                <argument>userAgent:agents.userAgent</argument>
-                                <argument>coordAgent:agents.coordAgent</argument>
-
+                                <argument>userAgent:agents.userAgent; coordAgent:agents.coordAgent</argument>
+                                <!--argument>coordAgent:agents.coordAgent</argument-->
                              </arguments>
                          </configuration>
                      </plugin>
