@@ -45,7 +45,6 @@ public class classifierAgent extends Agent{
 
             ACLMessage msg = this.blockingReceive(); //Another option to receive a message is blockingReceive()
             //System.out.println("mensaje recibido:"+msg);
-            System.out.println("AgentReceivedMessage");
 
             // We select the count from the classifierAgent attributes. Format: classifier-2
             // int count = Integer.parseInt(myAgent.getNameAgent().split("-")[1]);

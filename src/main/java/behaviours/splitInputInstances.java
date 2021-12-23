@@ -2,6 +2,7 @@ package behaviours;
 
 import agents.classifierAgent;
 import agents.coordAgent;
+import agents.userAgent;
 import jade.core.*;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class splitInputInstances extends CyclicBehaviour {
     private final coordAgent myAgent;
@@ -27,13 +29,16 @@ public class splitInputInstances extends CyclicBehaviour {
     public void action () {
         try {
             ACLMessage msg = myAgent.blockingReceive();
-            System.out.println(msg.getSender());
-            //if ((msg != null) && (msg.getSender() == "userAgent"))
-            if (msg != null) {
-                myAgent.setNameState(coordAgent.global_states.SENDING);
+            System.out.println(msg.getSender().getName());
+            AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
+            System.out.println(user_ID.getName());
+            String cond1 = msg.getSender().getName();
+            String cond2 = user_ID.getName();
+            if (cond1.equals(cond2)) {
+                myAgent.setNameState(coordAgent.global_states.TESTING);
                 System.out.println(msg);
                 Instances test_data = (Instances) msg.getContentObject();
-                //ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
+                // ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
                 //Instances test_data = source.getDataSet();
 
                 String[][] allarrays =
@@ -88,7 +93,8 @@ public class splitInputInstances extends CyclicBehaviour {
                             String[] [] message = new String[2][];
                             message[0] = attributes;
                             String [] second_element = new String [aux.length];
-                            for (int j = 0; j < aux.length; ++i){second_element[i] = Double.toString(aux[i]);}
+
+                            for (int j = 0; j < aux.length; ++j){second_element[j] = Double.toString(aux[j]);}
                             message[1] = second_element;
 
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
@@ -101,7 +107,6 @@ public class splitInputInstances extends CyclicBehaviour {
                         myAgent.setNumber_classifiers(l);
                         l += 1;
                     }
-                    myAgent.setNameState(coordAgent.global_states.VOTING);
                 }
             }
         }

@@ -28,7 +28,7 @@ public class WaitInputInstances extends CyclicBehaviour {
         try {
             // Using Scanner for getting input from user
             if (coordAgent.state == coordAgent.global_states.IDLE) {
-                //restart(); si hiciese falta ponerlo
+                restart();
                 System.out.println("Please, enter path of the file containing the instances to be classified.");
                 Scanner in = new Scanner(System.in);
                 String path_file = in.nextLine();
@@ -44,13 +44,10 @@ public class WaitInputInstances extends CyclicBehaviour {
 
                     ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                     msg.setContentObject(data); //The content of the message it's the data
-                    AID dest = new AID("coordinatorAgent", AID.ISLOCALNAME);
+                    AID dest = new AID("coordAgent", AID.ISLOCALNAME);
                     msg.addReceiver(dest); //The receiver is the coordinator Agent
                     myAgent.send(msg); //The message is sent
                 }
-            }
-            else{
-                block();
             }
             } catch(Exception e){
                 System.out.println("An error occured. EN USER");

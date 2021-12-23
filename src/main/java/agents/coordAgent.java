@@ -27,8 +27,7 @@ public class coordAgent extends Agent{
     
     public enum global_states {
         IDLE,
-        SENDING, //splitting instances
-        VOTING,
+        TESTING, //splitting instances and voting
     }
 
     public static global_states state;
@@ -37,15 +36,13 @@ public class coordAgent extends Agent{
     protected void setup() {
         this.register();
         this.sendTrainingInstances(this);
-        addBehaviour(new splitInputInstances(this));
-        addBehaviour(new votingSystem(this));
+        this.addBehaviour(new splitInputInstances(this));
+        this.addBehaviour(new votingSystem(this));
     }
     
     private void sendTrainingInstances(coordAgent agent){
 
         try {
-
-            //this.state = global_states.SENDING;
             //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
             Instances data = source.getDataSet();
@@ -124,6 +121,7 @@ public class coordAgent extends Agent{
 
             }
             this.state = global_states.IDLE;
+            System.out.println(this.state);
 
         } catch (Exception e) {
             System.out.println("E");

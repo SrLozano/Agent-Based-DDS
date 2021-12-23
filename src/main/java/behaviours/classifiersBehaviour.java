@@ -3,6 +3,7 @@ import agents.classifierAgent;
 import agents.coordAgent;
 
 import jade.core.AID;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.UnreadableException;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import jade.lang.acl.ACLMessage;
 import java.io.IOException;  // Import the IOException class to handle errors
 
-public class classifiersBehaviour extends OneShotBehaviour {
+public class classifiersBehaviour extends CyclicBehaviour {
 
     private final classifierAgent myAgent;
 
@@ -25,19 +26,14 @@ public class classifiersBehaviour extends OneShotBehaviour {
     }
 
     public void action() {
-        System.out.println(coordAgent.state);
+        //System.out.println(coordAgent.state);
         coordAgent.global_states stateString = coordAgent.state;
 
         //TODO: How to call the states defined in the coordinator
         J48 classifier = myAgent.getModel(); //Getting the trained classifiers
         try {
-            System.out.println("OlaTest");
             ACLMessage msg2 = myAgent.blockingReceive();
-            System.out.println("NO ESTA BLOCKED");
-            myAgent.setNameState(classifierAgent.classifier_states.TESTING);
             if (msg2 != null) {
-                System.out.println("HOLA");
-                System.out.println(msg2.getContentObject());
                 String[][] attr_vals = (String[][]) msg2.getContentObject();
                 String[] attributes = attr_vals[0];
                 ArrayList<Attribute> atts = new ArrayList<Attribute>();
@@ -67,10 +63,10 @@ public class classifiersBehaviour extends OneShotBehaviour {
 
                 ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
                 msg_to_send.setContentObject(message);
-                AID dest = new AID("coordinatorAgent", AID.ISLOCALNAME);
+                AID dest = new AID("coordAgent", AID.ISLOCALNAME);
                 msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                 myAgent.send(msg_to_send); //The message is sent
-                myAgent.setNameState(classifierAgent.classifier_states.IDLE);
+                System.out.println(myAgent.getAID()+" sent the classification to coordinator");
                 }
                 } catch (UnreadableException e) {
                     e.printStackTrace();
