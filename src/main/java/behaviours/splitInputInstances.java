@@ -28,10 +28,11 @@ public class splitInputInstances extends CyclicBehaviour {
         try {
             switch (myAgent.getNameState()) {
                 case TEST:
-                    block();
-                    ACLMessage msg = myAgent.receive();
+
+                    ACLMessage msg = myAgent.blockingReceive();
 
                     if (msg != null) {
+                        System.out.println(msg);
                         Instances test_data = (Instances) msg.getContentObject();
                         //ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
                         //Instances test_data = source.getDataSet();
@@ -52,7 +53,6 @@ public class splitInputInstances extends CyclicBehaviour {
                                         {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
                                 };
 
-                        ;
                         // For every firm in the test file the correspondent classifiers are selected
                         for (int i = 0; i < test_data.size(); i++) {
 

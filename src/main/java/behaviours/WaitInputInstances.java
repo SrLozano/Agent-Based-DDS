@@ -1,5 +1,6 @@
 package behaviours;
 
+import agents.coordAgent;
 import jade.core.*;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -29,6 +30,7 @@ public class WaitInputInstances extends CyclicBehaviour{
     }
 
     public void action () {
+
         try {
             // Using Scanner for getting input from user
             System.out.println("Please, enter path of the file containing the instances to be classified.");
@@ -41,6 +43,10 @@ public class WaitInputInstances extends CyclicBehaviour{
             // TODO: Comprobar si el input es correcto jejje y si no que salga un mensaje diciendo k no
             if(source != null) { // TODO: ojo always not null
                 System.out.println("Read");
+
+                // Data correctly read -> TEST Phase
+                coordAgent.state = coordAgent.global_states.TEST;
+
                 Instances data = source.getDataSet();
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                 msg.setContentObject(data); //The content of the message it's the data

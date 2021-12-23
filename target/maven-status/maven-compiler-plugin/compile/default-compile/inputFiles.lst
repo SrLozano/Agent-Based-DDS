@@ -10,7 +10,6 @@
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/urv/imas/behaviours/SimpleAgent.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/agents/TestFSMAgent.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/agents/testing_file2.java
-/Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/behaviours/trainClassifiers.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/behaviours/votingSystem.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/behaviours/TestFSMBehaviour.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/urv/imas/protocols/FIPARequestInitiatorAgent.java
@@ -20,4 +19,5 @@
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/behaviours/Instance.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/urv/imas/protocols/BrokerAgent.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/agents/classifierAgent.java
+/Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/behaviours/classifiersBehaviour.java
 /Users/mariolozano/Universidad Local/IMAS/Agent-Based-DDS/src/main/java/urv/imas/behaviours/ComplexBehaviourAgent.java

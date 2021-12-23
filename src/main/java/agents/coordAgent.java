@@ -30,6 +30,7 @@ public class coordAgent extends Agent{
         TEST,
         VOTING,
     }
+
     public static global_states state;
     private int number_classifiers;
 
@@ -54,8 +55,8 @@ public class coordAgent extends Agent{
             String[][] allarrays = // Es pot fer amb això: public class RandomSubset, no cal generar nosaltres la llista manually
                     {
                             {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},
-                            //{"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK", "Risk"},
-                            //{"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"},
+                            {"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK", "Risk"},
+                            {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"}//,
                             //{"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk", "Risk"},
                             //{"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F", "Risk"},
                             //{"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score", "Risk"},
@@ -122,7 +123,6 @@ public class coordAgent extends Agent{
                 count +=1;
 
             }
-            this.state = global_states.TEST;
 
         } catch (Exception e) {
             System.out.println("E");

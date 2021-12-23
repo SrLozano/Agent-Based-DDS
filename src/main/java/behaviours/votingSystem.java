@@ -19,7 +19,7 @@ public class votingSystem extends OneShotBehaviour {
     public void action () {
 
         switch (myAgent.getNameState()){
-            case VOTING:
+            case TEST:
 
                 int number_classifiers = myAgent.getNumber_classifiers();
 
@@ -34,6 +34,9 @@ public class votingSystem extends OneShotBehaviour {
 
                     try {
                         ACLMessage msg = myAgent.receive();
+
+                        System.out.println("One message received");
+                        System.out.println(responses);
 
                         // Message contains a double array with [performance, classification]
                         double [] response = (double[]) msg.getContentObject();
