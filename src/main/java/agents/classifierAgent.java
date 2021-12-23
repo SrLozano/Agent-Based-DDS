@@ -30,7 +30,6 @@ public class classifierAgent extends Agent{
     public static classifier_states state;
 
     protected void setup(){
-
         /* This is for setting arguments in the constructor*/
         Object[] args = getArguments();
         this.name = (String) args[0]; // this returns the String 1

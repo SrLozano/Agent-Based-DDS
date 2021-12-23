@@ -26,8 +26,8 @@ import agents.coordAgent;
 public class coordAgent extends Agent{
     
     public enum global_states {
-        TRAIN,
-        TEST,
+        IDLE,
+        SENDING, //splitting instances
         VOTING,
     }
 
@@ -45,7 +45,7 @@ public class coordAgent extends Agent{
 
         try {
 
-            this.state = global_states.TRAIN;
+            //this.state = global_states.SENDING;
             //tiene que recibir el mensaje por parte del coordinator, que le mandarà la instance a classificar
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
             Instances data = source.getDataSet();
@@ -123,6 +123,7 @@ public class coordAgent extends Agent{
                 count +=1;
 
             }
+            this.state = global_states.IDLE;
 
         } catch (Exception e) {
             System.out.println("E");
