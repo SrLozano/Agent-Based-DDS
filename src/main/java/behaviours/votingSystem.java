@@ -1,7 +1,6 @@
 package behaviours;
 
 import agents.coordAgent;
-import jade.core.*;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -31,10 +30,12 @@ public class votingSystem extends CyclicBehaviour {
                 try {
                     ACLMessage msg = myAgent.blockingReceive();
 
-                    System.out.println(responses);
+                    //System.out.println(responses);
 
-                    // Message contains a double array with [performance, classification]
-                    double[] response = (double[]) msg.getContentObject();
+                    // Message contains a double array with [performance, classification, instance number]
+                    double[] response = (double[]) msg.getContentObject(); //da este error: jade.lang.acl.UnreadableException: invalid stream header: 28202861
+                    double instance_num = response[2]; //TODO: ahora coge tambien el numero de instancias... siguiente linea
+                    //hay que hacer una votacion por cada instance
                     performances[responses] = response[0];
                     classifications[responses] = response[1];
 

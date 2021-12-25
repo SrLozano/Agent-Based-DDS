@@ -1,21 +1,15 @@
 package behaviours;
 
-import agents.classifierAgent;
 import agents.coordAgent;
-import agents.userAgent;
-import jade.core.*;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 public class splitInputInstances extends CyclicBehaviour {
     private final coordAgent myAgent;
@@ -31,10 +25,7 @@ public class splitInputInstances extends CyclicBehaviour {
             ACLMessage msg = myAgent.blockingReceive();
             System.out.println(msg.getSender().getName());
             AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
-            System.out.println(user_ID.getName());
-            String cond1 = msg.getSender().getName();
-            String cond2 = user_ID.getName();
-            if (cond1.equals(cond2)) {
+            if (msg.getSender().getName().equals(user_ID.getName())) {
                 myAgent.setNameState(coordAgent.global_states.TESTING);
                 System.out.println(msg);
                 Instances test_data = (Instances) msg.getContentObject();
@@ -49,17 +40,17 @@ public class splitInputInstances extends CyclicBehaviour {
                                 {"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk"},
                                 {"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F"},
                                 {"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score"},
-                                {"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk"},
-                                {"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk"},
-                                {"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK"},
-                                {"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk"},
-                                {"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk"},
-                                {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
+                                //{"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk"},
+                                //{"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk"},
+                                //{"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK"},
+                                //{"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk"},
+                                //{"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk"},
+                                //{"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
                         };
 
                 // For every firm in the test file the correspondent classifiers are selected
+                System.out.println("Number of instances to test: "+test_data.size());
                 for (int i = 0; i < test_data.size(); i++) {
-
                     Instance firm = test_data.get(i);
                     double[] aux = firm.toDoubleArray();
                     int k = 0;
@@ -90,22 +81,21 @@ public class splitInputInstances extends CyclicBehaviour {
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
 
                             // Prepare message for the instance to be classified
-                            String[] [] message = new String[2][];
+                            String[] [] message = new String[3][];
                             message[0] = attributes;
-                            String [] second_element = new String [aux.length];
-
-                            for (int j = 0; j < aux.length; ++j){second_element[j] = Double.toString(aux[j]);}
-                            message[1] = second_element;
-
+                            String [] values = new String [aux.length];
+                            String [] instance_id = new String [1]; //length 1 because we just need the num of instance
+                            instance_id[0] = Double.toString(i+1);
+                            for (int j = 0; j < aux.length; ++j){values[j] = Double.toString(aux[j]);}
+                            message[1] = values;
+                            message[2] = instance_id;
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + l, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                             myAgent.send(msg_to_send); //The message is sent
+                            l +=1; // Notice that since l starts in 1 it indicates the number of classifiers right after the instances
+                    myAgent.setNumber_classifiers(l); //number of classifiers working on that instance
                         }
-
-                        // Notice that since l starts in 1 it indicates the number of classifiers right after the instances
-                        myAgent.setNumber_classifiers(l);
-                        l += 1;
                     }
                 }
             }

@@ -1,19 +1,16 @@
 package agents;
 
-import behaviours.splitInputInstances;;
+import behaviours.splitInputInstances;
 import behaviours.votingSystem;
-
-import jade.core.*;
-//import jade.core.Runtime;
+import jade.core.AID;
+import jade.core.Agent;
+import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
-//import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
@@ -21,7 +18,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
 
-import agents.coordAgent;
+;
 
 public class coordAgent extends Agent{
     
@@ -53,10 +50,10 @@ public class coordAgent extends Agent{
                     {
                             {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},
                             {"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK", "Risk"},
-                            {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"}//,
-                            //{"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk", "Risk"},
-                            //{"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F", "Risk"},
-                            //{"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score", "Risk"},
+                            {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"},
+                            {"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk", "Risk"},
+                            {"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F", "Risk"},
+                            {"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score", "Risk"},
                             //{"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk", "Risk"},
                             //{"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk", "Risk"},
                             //{"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK", "Risk"},
