@@ -1,9 +1,12 @@
 package behaviours;
 
 import agents.coordAgent;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
+import java.io.IOException;
 
 public class votingSystem extends CyclicBehaviour {
 
@@ -15,31 +18,29 @@ public class votingSystem extends CyclicBehaviour {
         this.myAgent = coordAgent;
     }
 
-    public void action() {
-        if (myAgent.getNameState() == coordAgent.global_states.TESTING) {
-            int number_classifiers = myAgent.getNumber_classifiers();
 
+    public void action() {
+        if (myAgent.getNameState() == coordAgent.global_states.VOTING) {
+            int number_classifiers = myAgent.getNumber_classifications();
             // Arrays to collect performances and classifications from classifiers
             double[] performances = new double[number_classifiers];
             double[] classifications = new double[number_classifiers];
 
             int responses = 0;
-
             // Responses are obtained until all classifiers vote
             while (responses < number_classifiers) {
                 try {
                     ACLMessage msg = myAgent.blockingReceive();
-
-                    //System.out.println(responses);
-
-                    // Message contains a double array with [performance, classification, instance number]
+                    // Message contains a double array with [performance, classification, num_of_instance]
                     double[] response = (double[]) msg.getContentObject(); //da este error: jade.lang.acl.UnreadableException: invalid stream header: 28202861
-                    double instance_num = response[2]; //TODO: ahora coge tambien el numero de instancias... siguiente linea
-                    //hay que hacer una votacion por cada instance
+                    int instance_num = (int) response[2];
                     performances[responses] = response[0];
                     classifications[responses] = response[1];
-
+                    System.out.println(response[1]);
                     responses += 1;
+                    if (instance_num == 14) { //when it has received the results of all instances set to idle so it does not enter again this behaviour until new input
+                        myAgent.setNameState(coordAgent.global_states.IDLE);
+                    }
 
                 } catch (UnreadableException e) {
                     e.printStackTrace();
@@ -53,29 +54,36 @@ public class votingSystem extends CyclicBehaviour {
                 sum_performances += performances[i];
             }
 
-            double[] importance = new double[performances.length];
-
-            // We get the importance of each classifier knowing that all must sum 1
+            double[] weights = new double[performances.length];
+            // We get the importance (weight) of each classifier knowing that all must sum 1
             for (int i = 0; i < performances.length; ++i) {
-                importance[i] = performances[i] / sum_performances;
+                weights[i] = performances[i] / sum_performances;
             }
 
             double result = 0;
-
             for (int i = 0; i < classifications.length; ++i) {
-                result += classifications[i] * importance[i];
+                result += classifications[i] * weights[i];
             }
 
         /* If the result is bigger or equal than 0.5 it means that the majority (considering weights) of agents
         agree that the instance should be classified as 1. Otherwise, they return a 0. In case of a tie result
         is 1 because a false positive is better than a false negative */
+            double final_result = 0;
             if (result >= 0.5) {
-                result = 1;
+                final_result += 1;
             } else {
-                result = 0;
+                final_result += 0;
             }
-
-            //System.out.println(result);
+            ACLMessage msg_toSend = new ACLMessage(ACLMessage.INFORM);
+            double message = final_result;
+            try {
+                msg_toSend.setContentObject(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AID dest = new AID("userAgent", AID.ISLOCALNAME);
+            msg_toSend.addReceiver(dest); //The receiver is the coordinator Agent
+            myAgent.send(msg_toSend); //The message is sent
         }
     }
 }

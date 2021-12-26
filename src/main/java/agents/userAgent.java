@@ -1,17 +1,15 @@
 package agents;
-import java.util.Scanner;
 import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import behaviours.WaitInputInstances;
+import behaviours.userBehaviour;
 import jade.domain.FIPAException;
 
 public class userAgent extends Agent{
     protected void setup(){
         this.register();
-        addBehaviour(new WaitInputInstances(this));
+        addBehaviour(new userBehaviour(this));
     }
 
     private void register() {

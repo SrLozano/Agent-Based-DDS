@@ -15,7 +15,6 @@ urv\imas\protocols\ContractNetResponderAgent$1.class
 urv\imas\behaviours\FSMAgent$NamePrinter.class
 urv\imas\protocols\BrokerAgent$2.class
 urv\imas\protocols\ParallelContractNetResponderAgent$1.class
-behaviours\WaitInputInstances.class
 urv\imas\behaviours\SimpleAgent$FourStepBehaviour$1.class
 urv\imas\behaviours\TimeAgent$2.class
 behaviours\votingSystem.class
@@ -37,4 +36,5 @@ behaviours\classifiersBehaviour.class
 urv\imas\behaviours\ComplexBehaviourAgent.class
 agents\classifierAgent$classifier_states.class
 urv\imas\protocols\FIPARequestInitiatorAgent.class
+behaviours\userBehaviour.class
 urv\imas\behaviours\TimeAgent.class

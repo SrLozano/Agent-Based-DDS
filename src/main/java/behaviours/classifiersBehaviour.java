@@ -76,7 +76,7 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 AID dest = new AID("coordAgent", AID.ISLOCALNAME);
                 msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                 myAgent.send(msg_to_send); //The message is sent
-                System.out.println(myAgent.getAID().getName()+" sent the classification of instance "+instance_id+ "to coordinator");
+                System.out.println(myAgent.getAID().getName()+" sent the classification of instance to coordinator");
                 }
                 } catch (UnreadableException e) {
                     e.printStackTrace();

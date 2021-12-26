@@ -4,6 +4,7 @@ import agents.coordAgent;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -26,7 +27,6 @@ public class splitInputInstances extends CyclicBehaviour {
             System.out.println(msg.getSender().getName());
             AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
             if (msg.getSender().getName().equals(user_ID.getName())) {
-                myAgent.setNameState(coordAgent.global_states.TESTING);
                 System.out.println(msg);
                 Instances test_data = (Instances) msg.getContentObject();
                 // ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
@@ -50,6 +50,7 @@ public class splitInputInstances extends CyclicBehaviour {
 
                 // For every firm in the test file the correspondent classifiers are selected
                 System.out.println("Number of instances to test: "+test_data.size());
+
                 for (int i = 0; i < test_data.size(); i++) {
                     Instance firm = test_data.get(i);
                     double[] aux = firm.toDoubleArray();
@@ -69,32 +70,38 @@ public class splitInputInstances extends CyclicBehaviour {
                     //TODO: (si tenemos tiempo) CFP instead de iterar por todos los classifiers para ver si pueden clasificar los atributos
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
-                    int l = 1; //classifier counter
+                    int l = 0; //active classifiers counter
                     for (String[] attributes : allarrays) {
                         // Lists are created to use containsAll function
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
                         List<Integer> attributesList = new ArrayList(Arrays.asList(attributes));
-                        //TODO: if classifier busy (not IDLE) wait to send the instance
+
                         if (nameList.containsAll(attributesList)) {
                             System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
 
                             // Prepare message for the instance to be classified
-                            String[] [] message = new String[3][];
+                            String[][] message = new String[3][];
                             message[0] = attributes;
-                            String [] values = new String [aux.length];
-                            String [] instance_id = new String [1]; //length 1 because we just need the num of instance
-                            instance_id[0] = Double.toString(i+1);
-                            for (int j = 0; j < aux.length; ++j){values[j] = Double.toString(aux[j]);}
+                            String[] values = new String[aux.length];
+                            String[] instance_id = new String[1]; //length 1 because we just need the num of instance
+                            instance_id[0] = Double.toString(i + 1);
+                            for (int j = 0; j < aux.length; ++j) {
+                                values[j] = Double.toString(aux[j]);
+                            }
                             message[1] = values;
                             message[2] = instance_id;
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + l, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                             myAgent.send(msg_to_send); //The message is sent
-                            l +=1; // Notice that since l starts in 1 it indicates the number of classifiers right after the instances
-                    myAgent.setNumber_classifiers(l); //number of classifiers working on that instance
+                            l += 1; // l indicates the total number of classifiers active
+                            myAgent.setNumber_classifications(l);
+                            myAgent.setNameState(coordAgent.global_states.VOTING); //after sending an instance we set it to voting
+                            System.out.println("BLOCKED");
+                            myAgent.blockingReceive(MessageTemplate.MatchContent("continue"));
+                            System.out.println("UNBLOCKED");
                         }
                     }
                 }
@@ -105,5 +112,4 @@ public class splitInputInstances extends CyclicBehaviour {
             System.out.println("An error happened");
         }
     }
-
 }
