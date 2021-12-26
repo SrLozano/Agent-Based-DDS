@@ -22,12 +22,14 @@ public class classifierAgent extends Agent{
     private Double performance;
     private J48 model; // File location of the model
 
+    /*
     public enum classifier_states {
         IDLE,
         TESTING,
     }
 
     public static classifier_states state;
+    */
 
     protected void setup(){
         /* This is for setting arguments in the constructor*/
@@ -64,14 +66,14 @@ public class classifierAgent extends Agent{
 
                 // WHY THIS IF????? TODO: Please someone explains this better
                 if (trainval.getClass() == Instances.class) {
-                    System.out.println("-" + this.getLocalName());
+                    //System.out.println("-" + this.getLocalName());
 
                     // We reply to the user that the message has been received
                     //reply.setPerformative(ACLMessage.INFORM); //If the user sends a Request --> Informs
                     //reply.setContent("The training data has been received");
                     //myAgent.send(reply);
 
-                    System.out.println("Classifier being trained");
+                    //System.out.println("Classifier being trained");
 
                     double percentage = 25; // Percentage to validation purposes
 
@@ -110,7 +112,7 @@ public class classifierAgent extends Agent{
                     // Setting class attributes model and performance for classifier
                     this.setModel(classifier); //trained classifier
                     this.setPerformance(performance);
-                    this.setNameState(classifier_states.IDLE);
+                    //this.setNameState(classifier_states.IDLE);
                 }
             }
         } catch(Exception e){
@@ -135,8 +137,8 @@ public class classifierAgent extends Agent{
         dfd.addServices(sd);
         try {
             DFService.register(this, dfd );
-            System.out.println("["+getLocalName()+"]:"+"DF Registered");
-            System.out.println(this.getName());
+            //System.out.println("["+getLocalName()+"]:"+"DF Registered");
+            //System.out.println(this.getName());
 
         }
         catch (FIPAException fe) {
@@ -178,13 +180,13 @@ public class classifierAgent extends Agent{
         return this.model;
     }
 
-    public void setNameState(classifierAgent.classifier_states state){
-        this.state = state;
-    }
+    //public void setNameState(classifierAgent.classifier_states state){
+      //  this.state = state;
+    //}
 
-    public classifierAgent.classifier_states getNameState(){
-        return this.state;
-    }
+    //public classifierAgent.classifier_states getNameState(){
+      //  return this.state;
+    //}
 
 }
 

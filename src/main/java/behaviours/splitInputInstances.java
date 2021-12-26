@@ -23,11 +23,15 @@ public class splitInputInstances extends CyclicBehaviour {
 
     public void action () {
         try {
+            System.out.println("MEGA TESTTTTTTTTTTT");
             ACLMessage msg = myAgent.blockingReceive();
-            System.out.println(msg.getSender().getName());
+            System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOKING");
+
+            // System.out.println(msg.getSender().getName());
+
             AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
             if (msg.getSender().getName().equals(user_ID.getName())) {
-                System.out.println(msg);
+                // System.out.println(msg);
                 Instances test_data = (Instances) msg.getContentObject();
                 // ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
                 //Instances test_data = source.getDataSet();
@@ -40,16 +44,16 @@ public class splitInputInstances extends CyclicBehaviour {
                                 {"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk"},
                                 {"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F"},
                                 {"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score"},
-                                //{"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk"},
-                                //{"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk"},
-                                //{"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK"},
-                                //{"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk"},
-                                //{"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk"},
-                                //{"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
+                                {"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk"},
+                                {"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk"},
+                                {"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK"},
+                                {"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk"},
+                                {"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk"},
+                                {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk"}
                         };
 
                 // For every firm in the test file the correspondent classifiers are selected
-                System.out.println("Number of instances to test: "+test_data.size());
+                System.out.println("Number of instances to test: " + test_data.size());
 
                 for (int i = 0; i < test_data.size(); i++) {
                     Instance firm = test_data.get(i);
@@ -95,10 +99,14 @@ public class splitInputInstances extends CyclicBehaviour {
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + l, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
+
+                            System.out.println("PRINT ANTES DEL SEND");
+
                             myAgent.send(msg_to_send); //The message is sent
                             l += 1; // l indicates the total number of classifiers active
                             myAgent.setNumber_classifications(l);
                             myAgent.setNameState(coordAgent.global_states.VOTING); //after sending an instance we set it to voting
+
                             System.out.println("BLOCKED");
                             myAgent.blockingReceive(MessageTemplate.MatchContent("continue"));
                             System.out.println("UNBLOCKED");

@@ -33,8 +33,8 @@ public class coordAgent extends Agent{
     protected void setup() {
         this.register();
         this.sendTrainingInstances(this);
-        this.addBehaviour(new splitInputInstances(this));
         this.addBehaviour(new votingSystem(this));
+        this.addBehaviour(new splitInputInstances(this));
     }
     
     private void sendTrainingInstances(coordAgent agent){
@@ -53,12 +53,12 @@ public class coordAgent extends Agent{
                             {"Score_A", "Risk_B", "Money_Value", "PROB", "Score", "Audit_Risk", "Risk"},
                             {"Sector_score", "PARA_A", "TOTAL", "Risk_C", "RiSk_E", "Risk_F", "Risk"},
                             {"LOCATION_ID", "Score_A", "numbers", "Money_Value", "History", "Score", "Risk"},
-                            //{"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk", "Risk"},
-                            //{"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk", "Risk"},
-                            //{"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK", "Risk"},
-                            //{"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk", "Risk"},
-                            //{"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk", "Risk"},
-                            //{"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
+                            {"Risk_A", "Score_B", "Score_MV", "District_Loss", "Inherent_Risk", "Detection_Risk", "Risk"},
+                            {"PARA_B", "Risk_B", "Risk_D", "PROB", "CONTROL_RISK", "Audit_Risk", "Risk"},
+                            {"Sector_score", "PARA_B", "TOTAL", "Risk_D", "RiSk_E", "CONTROL_RISK", "Risk"},
+                            {"LOCATION_ID", "Risk_A", "numbers", "Score_MV", "History", "Inherent_Risk", "Risk"},
+                            {"PARA_A", "Risk_B", "Risk_C", "PROB", "Risk_F", "Audit_Risk", "Risk"},
+                            {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
                     };
 
             // Get a hold on JADE runtime
@@ -116,7 +116,7 @@ public class coordAgent extends Agent{
                 count +=1;
 
             }
-            this.state = global_states.IDLE;
+            this.setNameState(global_states.IDLE);
 
         } catch (Exception e) {
             System.out.println("E");

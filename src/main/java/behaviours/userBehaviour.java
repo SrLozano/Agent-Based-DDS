@@ -25,6 +25,7 @@ public class userBehaviour extends CyclicBehaviour {
     public void action() {
         try {
             // Using Scanner for getting input from user
+            System.out.println("HOLA " + coordAgent.state);
             if (coordAgent.state==coordAgent.global_states.IDLE) {
                 System.out.println("Please, enter path of the file containing the instances to be classified.");
                 Scanner in = new Scanner(System.in);
@@ -45,9 +46,10 @@ public class userBehaviour extends CyclicBehaviour {
                     msg.addReceiver(dest); //The receiver is the coordinator Agent
                     myAgent.send(msg); //The message is sent
                     System.out.println("instances sent to coordinator");
+                    Thread.sleep(1000);
                 }
             } // SENDING or VOTING. A result is received so that sliptinputIntances can continue
-            else{
+            else if (coordAgent.state==coordAgent.global_states.VOTING){
                 int received_instances = 0;
                 double[] results = new double[15];
                 while (received_instances<15){ // 15 is the number of instances in a file. TODO: put this in a global variable?
@@ -60,6 +62,7 @@ public class userBehaviour extends CyclicBehaviour {
                     AID dest_agent = new AID("coordAgent", AID.ISLOCALNAME);
                     msg_to_send.addReceiver(dest_agent); //The receiver is the coordinator Agent
                     myAgent.send(msg_to_send); //The message is sent
+                    System.out.println("continue message sent");
                 System.out.println(results);
                 }
             }

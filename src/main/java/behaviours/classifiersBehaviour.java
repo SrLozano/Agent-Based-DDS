@@ -26,13 +26,16 @@ public class classifiersBehaviour extends CyclicBehaviour {
     }
 
     public void action() {
-        //System.out.println(coordAgent.state);
+        System.out.println("SOY CLASSIFIER Y ESTADO: " + coordAgent.state);
         coordAgent.global_states stateString = coordAgent.state;
 
         //TODO: How to call the states defined in the coordinator
         J48 classifier = myAgent.getModel(); //Getting the trained classifiers
         try {
             ACLMessage msg2 = myAgent.blockingReceive();
+
+            System.out.println("SOY CLASSIFIER Y ME DESBLOQUEO: " + coordAgent.state);
+
             if (msg2 != null) {
                 //msg2 has the attributes in the first array, the values in the second, and the instance id in the third
                 String[][] attr_vals_id = (String[][]) msg2.getContentObject();
@@ -66,6 +69,9 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                System.out.println("CLASSIFIER MANDA OUTPUY Y ESTADO: " + coordAgent.state);
+
                 double performance = myAgent.getPerformance();
                 double[] message = new double[3];
                 message[0] = performance;
@@ -76,7 +82,9 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 AID dest = new AID("coordAgent", AID.ISLOCALNAME);
                 msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
                 myAgent.send(msg_to_send); //The message is sent
+
                 System.out.println(myAgent.getAID().getName()+" sent the classification of instance to coordinator");
+
                 }
                 } catch (UnreadableException e) {
                     e.printStackTrace();

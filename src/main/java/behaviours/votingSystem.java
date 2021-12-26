@@ -9,7 +9,6 @@ import jade.lang.acl.UnreadableException;
 import java.io.IOException;
 
 public class votingSystem extends CyclicBehaviour {
-
     private final coordAgent myAgent;
 
     // Constructor of the behaviour
@@ -18,9 +17,11 @@ public class votingSystem extends CyclicBehaviour {
         this.myAgent = coordAgent;
     }
 
-
     public void action() {
+        System.out.println("ESTO ES DEL VOTING SYSTEM Y SE TIEN QUE IMPRIMIR SIEMPRE");
+
         if (myAgent.getNameState() == coordAgent.global_states.VOTING) {
+            System.out.println("ESTAMOS EN VOTING");
             int number_classifiers = myAgent.getNumber_classifications();
             // Arrays to collect performances and classifications from classifiers
             double[] performances = new double[number_classifiers];
