@@ -116,10 +116,9 @@ public class splitInputInstances extends CyclicBehaviour {
                         }
                         c += 1;
                     }
-                    voting();
                     System.out.println("l = " + l);
                     myAgent.setNumber_classifications(l);
-
+                    voting();
                 }
             }
         }
