@@ -1,6 +1,6 @@
 package agents;
 
-import behaviours.splitInputInstances;
+import behaviours.coordinatorBehaviour;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -31,7 +31,7 @@ public class coordAgent extends Agent{
         this.register();
         this.sendTrainingInstances(this);
         // this.addBehaviour(new votingSystem(this));
-        this.addBehaviour(new splitInputInstances(this));
+        this.addBehaviour(new coordinatorBehaviour(this));
     }
     
     private void sendTrainingInstances(coordAgent agent){
@@ -69,7 +69,7 @@ public class coordAgent extends Agent{
             // Creating a main container for the ClassifierAgents
             //ContainerController ac = rt.createMainContainer(p);
 
-            int count = 1;
+            int count = 0;
             //Starting a loop 'for' for each of the packages that has to be sent to the classifier agents
             for (String[] indices : allarrays) {
                 int[] indecesInstancesToTrainVal = new int[7]; // combinando ambas declaraciones en una

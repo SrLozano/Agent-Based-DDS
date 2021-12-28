@@ -4,7 +4,6 @@ import agents.coordAgent;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -15,11 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class splitInputInstances extends CyclicBehaviour {
+public class coordinatorBehaviour extends CyclicBehaviour {
     private final coordAgent myAgent;
 
     // Constructor of the behaviour
-    public splitInputInstances(coordAgent coordAgent) {
+    public coordinatorBehaviour(coordAgent coordAgent) {
         super(coordAgent);
         this.myAgent = coordAgent;
     }
@@ -28,7 +27,7 @@ public class splitInputInstances extends CyclicBehaviour {
         try {
             // System.out.println("MEGA TESTTTTTTTTTTT");
             ACLMessage msg = myAgent.blockingReceive();
-            // System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOKING");
+            // System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOCKING");
 
             // System.out.println(msg.getSender().getName());
 
@@ -104,7 +103,7 @@ public class splitInputInstances extends CyclicBehaviour {
                             AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
 
-                            System.out.println("PRINT ANTES DEL SEND");
+                            //System.out.println("PRINT ANTES DEL SEND to classifier " + c);
 
                             myAgent.send(msg_to_send); //The message is sent
                             l += 1; // l indicates the total number of classifiers active
@@ -116,7 +115,7 @@ public class splitInputInstances extends CyclicBehaviour {
                         }
                         c += 1;
                     }
-                    System.out.println("l = " + l);
+                    //System.out.println("l = " + l);
                     myAgent.setNumber_classifications(l);
                     voting();
                 }
@@ -130,7 +129,7 @@ public class splitInputInstances extends CyclicBehaviour {
 
     public void voting () {
         // System.out.println(myAgent.getNameState());
-        System.out.println("ESTAMOS EN VOTING");
+        //System.out.println("ESTAMOS EN VOTING");
 
         int number_classifiers = myAgent.getNumber_classifications();
         // Arrays to collect performances and classifications from classifiers
@@ -141,17 +140,17 @@ public class splitInputInstances extends CyclicBehaviour {
         // Responses are obtained until all classifiers vote
         while (responses < number_classifiers) {
             try {
-                System.out.println("Responses in while: "+ responses);
-                System.out.println("NumberClassifiers in while: "+ number_classifiers);
-                ACLMessage msg = myAgent.blockingReceive();
+                //System.out.println("Responses in while: "+ responses);
+                //System.out.println("NumberClassifiers in while: "+ number_classifiers);
+                ACLMessage msg_received = myAgent.blockingReceive();
                 // Message contains a double array with [performance, classification, num_of_instance]
-                // System.out.println(msg.getContentObject());
-                String[] response = (String[]) msg.getContentObject();
+                String[] response = (String[]) msg_received.getContentObject();
+                //System.out.println("Message content: " + response);
                 performances[responses] = Double.parseDouble(response[0]);
                 classifications[responses] = Double.parseDouble(response[1]);
-                int instance_num = Integer.getInteger(response[2]);
-
+                int instance_num =  (int) Double.parseDouble(response[2]);
                 responses += 1;
+                //System.out.println("Responses post sum: "+ responses);
                 if (instance_num == 14) { //when it has received the results of all instances set to idle so it does not enter again this behaviour until new input
                     myAgent.setNameState(coordAgent.global_states.IDLE);
                 }
@@ -188,6 +187,7 @@ public class splitInputInstances extends CyclicBehaviour {
         } else {
             final_result += 0;
         }
+        System.out.println("Classification is: " + final_result);
         ACLMessage msg_toSend = new ACLMessage(ACLMessage.INFORM);
         double message = final_result;
         try {

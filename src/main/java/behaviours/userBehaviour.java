@@ -58,7 +58,7 @@ public class userBehaviour extends CyclicBehaviour {
                     ACLMessage msg_received = myAgent.blockingReceive();
                     results[received_instances] = (double) msg_received.getContentObject();
                     received_instances+=1;
-
+                    System.out.println("Num of received instances: "+received_instances);
                 System.out.println(results);
                 }
             }
