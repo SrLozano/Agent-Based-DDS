@@ -1,7 +1,6 @@
 package agents;
 
 import behaviours.splitInputInstances;
-import behaviours.votingSystem;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -18,8 +17,6 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
 
-;
-
 public class coordAgent extends Agent{
     
     public enum global_states {
@@ -33,7 +30,7 @@ public class coordAgent extends Agent{
     protected void setup() {
         this.register();
         this.sendTrainingInstances(this);
-        this.addBehaviour(new votingSystem(this));
+        // this.addBehaviour(new votingSystem(this));
         this.addBehaviour(new splitInputInstances(this));
     }
     
@@ -110,7 +107,7 @@ public class coordAgent extends Agent{
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
                 msg.setContentObject(trainval); //The content of the message it's the data
                 AID dest = new AID("classifier-" + count, AID.ISLOCALNAME);
-                System.out.println("classifier-" + count+  " AID is " + dest);
+                //System.out.println("classifier-" + count+  " AID is " + dest);
                 msg.addReceiver(dest); //The receiver is the classifier
                 this.send(msg); //The message is sent
                 count +=1;
@@ -170,4 +167,5 @@ public class coordAgent extends Agent{
     public int getNumber_classifications(){
         return this.number_classifications;
     }
+
 }

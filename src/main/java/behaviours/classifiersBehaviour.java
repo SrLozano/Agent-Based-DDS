@@ -25,8 +25,7 @@ public class classifiersBehaviour extends CyclicBehaviour {
         this.myAgent = classifierAgent;
     }
 
-    public void action() {
-        System.out.println("SOY CLASSIFIER Y ESTADO: " + coordAgent.state);
+    public void action(){
         coordAgent.global_states stateString = coordAgent.state;
 
         //TODO: How to call the states defined in the coordinator
@@ -34,7 +33,7 @@ public class classifiersBehaviour extends CyclicBehaviour {
         try {
             ACLMessage msg2 = myAgent.blockingReceive();
 
-            System.out.println("SOY CLASSIFIER Y ME DESBLOQUEO: " + coordAgent.state);
+            System.out.println("SOY CLASSIFIER: "+ myAgent.getName() + "Y ME DESBLOQUEO: " + coordAgent.state);
 
             if (msg2 != null) {
                 //msg2 has the attributes in the first array, the values in the second, and the instance id in the third
@@ -70,13 +69,13 @@ public class classifiersBehaviour extends CyclicBehaviour {
                     e.printStackTrace();
                 }
 
-                System.out.println("CLASSIFIER MANDA OUTPUY Y ESTADO: " + coordAgent.state);
+                //System.out.println("CLASSIFIER MANDA OUTPUT Y ESTADO: " + coordAgent.state);
 
                 double performance = myAgent.getPerformance();
-                double[] message = new double[3];
-                message[0] = performance;
-                message[1] = output;
-                message[2] = Double.parseDouble(instance_id);
+                String[] message = new String[3];
+                message[0] = String.valueOf(performance);
+                message[1] = String.valueOf(output);
+                message[2] = String.valueOf(instance_id);
                 ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
                 msg_to_send.setContentObject(message);
                 AID dest = new AID("coordAgent", AID.ISLOCALNAME);

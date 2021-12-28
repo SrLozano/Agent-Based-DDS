@@ -5,12 +5,15 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class splitInputInstances extends CyclicBehaviour {
     private final coordAgent myAgent;
@@ -23,9 +26,9 @@ public class splitInputInstances extends CyclicBehaviour {
 
     public void action () {
         try {
-            System.out.println("MEGA TESTTTTTTTTTTT");
+            // System.out.println("MEGA TESTTTTTTTTTTT");
             ACLMessage msg = myAgent.blockingReceive();
-            System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOKING");
+            // System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOKING");
 
             // System.out.println(msg.getSender().getName());
 
@@ -75,6 +78,7 @@ public class splitInputInstances extends CyclicBehaviour {
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
                     int l = 0; //active classifiers counter
+                    int c = 0; //identifier of the classifier agent studied in the for loop
                     for (String[] attributes : allarrays) {
                         // Lists are created to use containsAll function
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
@@ -97,21 +101,25 @@ public class splitInputInstances extends CyclicBehaviour {
                             message[1] = values;
                             message[2] = instance_id;
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
-                            AID dest = new AID("classifier-" + l, AID.ISLOCALNAME);
+                            AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
 
                             System.out.println("PRINT ANTES DEL SEND");
 
                             myAgent.send(msg_to_send); //The message is sent
                             l += 1; // l indicates the total number of classifiers active
-                            myAgent.setNumber_classifications(l);
-                            myAgent.setNameState(coordAgent.global_states.VOTING); //after sending an instance we set it to voting
 
-                            System.out.println("BLOCKED");
-                            myAgent.blockingReceive(MessageTemplate.MatchContent("continue"));
-                            System.out.println("UNBLOCKED");
+                            myAgent.setNameState(coordAgent.global_states.VOTING); //after sending an instance we set it to votin
+                            // System.out.println("BLOCKED");
+                            // myAgent.blockingReceive(MessageTemplate.MatchContent("continue"));
+                            // System.out.println("UNBLOCKED");
                         }
+                        c += 1;
                     }
+                    voting();
+                    System.out.println("l = " + l);
+                    myAgent.setNumber_classifications(l);
+
                 }
             }
         }
@@ -119,5 +127,78 @@ public class splitInputInstances extends CyclicBehaviour {
             e.printStackTrace();
             System.out.println("An error happened");
         }
+    }
+
+    public void voting () {
+        // System.out.println(myAgent.getNameState());
+        System.out.println("ESTAMOS EN VOTING");
+
+        int number_classifiers = myAgent.getNumber_classifications();
+        // Arrays to collect performances and classifications from classifiers
+        double[] performances = new double[number_classifiers];
+        double[] classifications = new double[number_classifiers];
+
+        int responses = 0;
+        // Responses are obtained until all classifiers vote
+        while (responses < number_classifiers) {
+            try {
+                System.out.println("Responses in while: "+ responses);
+                System.out.println("NumberClassifiers in while: "+ number_classifiers);
+                ACLMessage msg = myAgent.blockingReceive();
+                // Message contains a double array with [performance, classification, num_of_instance]
+                // System.out.println(msg.getContentObject());
+                String[] response = (String[]) msg.getContentObject();
+                performances[responses] = Double.parseDouble(response[0]);
+                classifications[responses] = Double.parseDouble(response[1]);
+                int instance_num = Integer.getInteger(response[2]);
+
+                responses += 1;
+                if (instance_num == 14) { //when it has received the results of all instances set to idle so it does not enter again this behaviour until new input
+                    myAgent.setNameState(coordAgent.global_states.IDLE);
+                }
+
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+        }
+
+        double sum_performances = 0;
+
+        // We get the sum of the performances so each one could have a good weight
+        for (int i = 0; i < performances.length; ++i) {
+            sum_performances += performances[i];
+        }
+
+        double[] weights = new double[performances.length];
+        // We get the importance (weight) of each classifier knowing that all must sum 1
+        for (int i = 0; i < performances.length; ++i) {
+            weights[i] = performances[i] / sum_performances;
+        }
+
+        double result = 0;
+        for (int i = 0; i < classifications.length; ++i) {
+            result += classifications[i] * weights[i];
+        }
+
+        /* If the result is bigger or equal than 0.5 it means that the majority (considering weights) of agents
+        agree that the instance should be classified as 1. Otherwise, they return a 0. In case of a tie result
+        is 1 because a false positive is better than a false negative */
+        double final_result = 0;
+        if (result >= 0.5) {
+            final_result += 1;
+        } else {
+            final_result += 0;
+        }
+        ACLMessage msg_toSend = new ACLMessage(ACLMessage.INFORM);
+        double message = final_result;
+        try {
+            msg_toSend.setContentObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        AID dest = new AID("userAgent", AID.ISLOCALNAME);
+        msg_toSend.addReceiver(dest); //The receiver is the coordinator Agent
+        myAgent.send(msg_toSend); //The message is sent
+
     }
 }

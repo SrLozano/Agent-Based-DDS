@@ -108,7 +108,7 @@ public class classifierAgent extends Agent{
                     Evaluation eval = new Evaluation(validation);
                     eval.evaluateModel(classifier, validation);
                     double performance = (eval.correct() / validation.numInstances()) * 100;
-                    System.out.println("Performance = " + performance);
+                    //System.out.println("Performance = " + performance);
                     // Setting class attributes model and performance for classifier
                     this.setModel(classifier); //trained classifier
                     this.setPerformance(performance);

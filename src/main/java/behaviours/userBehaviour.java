@@ -25,7 +25,7 @@ public class userBehaviour extends CyclicBehaviour {
     public void action() {
         try {
             // Using Scanner for getting input from user
-            System.out.println("HOLA " + coordAgent.state);
+            //System.out.println("HOLA " + coordAgent.state);
             if (coordAgent.state==coordAgent.global_states.IDLE) {
                 System.out.println("Please, enter path of the file containing the instances to be classified.");
                 Scanner in = new Scanner(System.in);
@@ -46,6 +46,7 @@ public class userBehaviour extends CyclicBehaviour {
                     msg.addReceiver(dest); //The receiver is the coordinator Agent
                     myAgent.send(msg); //The message is sent
                     System.out.println("instances sent to coordinator");
+                    // TODO: Is this okey?
                     Thread.sleep(1000);
                 }
             } // SENDING or VOTING. A result is received so that sliptinputIntances can continue
@@ -57,12 +58,7 @@ public class userBehaviour extends CyclicBehaviour {
                     ACLMessage msg_received = myAgent.blockingReceive();
                     results[received_instances] = (double) msg_received.getContentObject();
                     received_instances+=1;
-                    ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
-                    msg_to_send.setContentObject("continue");
-                    AID dest_agent = new AID("coordAgent", AID.ISLOCALNAME);
-                    msg_to_send.addReceiver(dest_agent); //The receiver is the coordinator Agent
-                    myAgent.send(msg_to_send); //The message is sent
-                    System.out.println("continue message sent");
+
                 System.out.println(results);
                 }
             }
