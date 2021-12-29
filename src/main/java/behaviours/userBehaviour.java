@@ -1,5 +1,12 @@
-package behaviours;
+/*****************************************************************
+ TODO: Fill description of this file. Explain everything
+ @behaviour: userAgent
 
+ @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
+ @group: 6 - IMAS - URV - UPC
+ *****************************************************************/
+
+package behaviours;
 import agents.coordAgent;
 import agents.userAgent;
 import jade.core.AID;
@@ -7,7 +14,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
-
 import java.util.Scanner;
 
 
@@ -24,31 +30,34 @@ public class userBehaviour extends CyclicBehaviour {
 
     public void action() {
         try {
-            // Using Scanner for getting input from user
-            //System.out.println("HOLA " + coordAgent.state);
+            //The user asks for new test instances only if the coordinator is in IDLE state
             if (coordAgent.state==coordAgent.global_states.IDLE) {
-                Thread.sleep(1000); // For achieving a good print order in the terminal
-                System.out.println("Please, enter path of the file containing the instances to be classified.");
-                Scanner in = new Scanner(System.in);
-                String path_file = in.nextLine();
-                System.out.println("You entered string " + path_file);
-                this.path_file = path_file;
-                System.out.println("data is being read at direction:" + System.getProperty("user.dir") + '/' + this.path_file);
-                DataSource source = new DataSource(System.getProperty("user.dir") + '/' + this.path_file);
-                // TODO: Comprobar si el input es correcto jejje y si no que salga un mensaje diciendo k no
-                if (source != null) { // TODO: ojo always not null
-                    System.out.println("Read");
-
-                    Instances data = source.getDataSet();
-
-                    ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                    msg.setContentObject(data); //The content of the message it's the data
-                    AID dest = new AID("coordAgent", AID.ISLOCALNAME);
-                    msg.addReceiver(dest); //The receiver is the coordinator Agent
-                    myAgent.send(msg); //The message is sent
-                    System.out.println("instances sent to coordinator");
-                    // TODO: Is this okey?
-                    Thread.sleep(1000);
+                try {
+                    Thread.sleep(1000); // For achieving a good print order in the terminal
+                    System.out.println("Please, enter path of the file containing the instances to be classified.");
+                    // Using Scanner for getting input from user
+                    Scanner in = new Scanner(System.in);
+                    String path_file = in.nextLine();
+                    System.out.println("You entered string " + path_file);
+                    this.path_file = path_file;
+                    System.out.println("data is being read at direction:" + System.getProperty("user.dir") + '/' + this.path_file);
+                    DataSource source = new DataSource(System.getProperty("user.dir") + '/' + this.path_file);
+                    // TODO: Comprobar si el input es correcto jejje y si no que salga un mensaje diciendo k no
+                    if (source != null) {
+                        System.out.println("Read");
+                        Instances data = source.getDataSet();
+                        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+                        msg.setContentObject(data); //The content of the message it's the data
+                        AID dest = new AID("coordAgent", AID.ISLOCALNAME);
+                        msg.addReceiver(dest); //The receiver is the coordinator Agent
+                        myAgent.send(msg); //The message is sent
+                        System.out.println("instances sent to coordinator");
+                        // TODO: Is this okey?
+                        Thread.sleep(1000);
+                    }
+                } catch (Exception e) {
+                    System.out.println("An error occurred when trying to read data from source. Please enter the source again.");
+                    e.printStackTrace();
                 }
             } // SENDING or VOTING. A result is received so that sliptinputIntances can continue
             else if (coordAgent.state==coordAgent.global_states.VOTING){
@@ -64,7 +73,7 @@ public class userBehaviour extends CyclicBehaviour {
                 }
             }
         } catch(Exception e){
-            System.out.println("An error occurred when trying to read data from source");
+            System.out.println("An error occurred when receiving the results from coordinator.");
         }
     }
 }

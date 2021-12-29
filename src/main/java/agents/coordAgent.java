@@ -95,7 +95,7 @@ public class coordAgent extends Agent{
                 Randomize randomize = new Randomize();
                 randomize.setInputFormat(splittrainval);
 
-                // TODO: Why 300? Explain it
+                // TODO: Why 300? Explain it... lo pide el enunciado no? que sean 300 instances
                 Instances trainval = new Instances(splittrainval, 0, 300);
 
                 AgentController anotherAgent;
@@ -118,7 +118,6 @@ public class coordAgent extends Agent{
                 this.send(msg); // The message is sent
                 count +=1;
             }
-
             // Classifiers are created and trained. System waits for instances to classify
             this.setNameState(global_states.IDLE);
 

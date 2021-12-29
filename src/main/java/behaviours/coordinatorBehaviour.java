@@ -62,10 +62,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     double[] aux = firm.toDoubleArray();
                     int k = 0;
                     String[] names = new String[aux.length]; // List with the firm attributes
-
-                    // The list with the firm attributes is filled
                     for (int j = 0; j < aux.length; j++) { // For each attribute
-
                         // Only if the attribute is not missing it gets introduced in the array
                         if (aux[j] != 1000.0) {
                             names[k] = String.valueOf(firm.attribute(j)).split(" ")[1]; // The attribute name is introduced
@@ -84,19 +81,26 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         List<Integer> attributesList = new ArrayList(Arrays.asList(attributes));
 
                         if (nameList.containsAll(attributesList)) {
+                            String[] values = new String[attributes.length];
+                            String[] ordered_attributes = new String[attributes.length];
+                            int aux_index_values = 0;
+                            for (int m=0; m<aux.length; m++){ //just select the values corresponding to the 6 attributes of the classifier
+                                if (attributesList.contains(String.valueOf(firm.attribute(m)).split(" ")[1])) {
+                                    values[aux_index_values] = Double.toString(aux[m]);
+                                    ordered_attributes[aux_index_values] = String.valueOf(firm.attribute(m)).split(" ")[1];
+                                    aux_index_values += 1;
+                                }
+                            }
+
                             System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
 
                             // Prepare message for the instance to be classified
                             String[][] message = new String[3][];
-                            message[0] = attributes;
-                            String[] values = new String[aux.length];
+                            message[0] = ordered_attributes;
                             String[] instance_id = new String[1]; //length 1 because we just need the num of instance
                             instance_id[0] = Double.toString(i + 1);
-                            for (int j = 0; j < aux.length; ++j) {
-                                values[j] = Double.toString(aux[j]);
-                            }
                             message[1] = values;
                             message[2] = instance_id;
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
@@ -119,6 +123,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     myAgent.setNumber_classifications(l);
                     voting();
                 }
+                System.out.println("AQUI CAMBIO");
+                myAgent.setNameState(coordAgent.global_states.IDLE);
             }
         }
         catch (Exception e) {
@@ -198,9 +204,6 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         AID dest = new AID("userAgent", AID.ISLOCALNAME);
         msg_toSend.addReceiver(dest); //The receiver is the coordinator Agent
         myAgent.send(msg_toSend); //The message is sent
-
-        System.out.println("AQUI CAMBIO");
-        myAgent.setNameState(coordAgent.global_states.IDLE);
 
     }
 }

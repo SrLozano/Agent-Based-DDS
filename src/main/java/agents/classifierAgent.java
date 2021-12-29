@@ -60,7 +60,7 @@ public class classifierAgent extends Agent{
 
                 Instances trainval = (Instances) train_obj;
 
-                // TODO: Please someone explains why this IF. (trainval != null is for avoiding NullPointer Exception)
+                // TODO: Please someone explain why this IF. (trainval != null is for avoiding NullPointer Exception)
                 if (trainval != null && trainval.getClass() == Instances.class) {
 
                     double percentage = 25; // Percentage for validation purposes

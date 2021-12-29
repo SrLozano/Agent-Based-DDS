@@ -28,7 +28,7 @@ public class classifiersBehaviour extends CyclicBehaviour {
     public void action(){
         coordAgent.global_states stateString = coordAgent.state;
 
-        //TODO: How to call the states defined in the coordinator
+        //TODO: How to call the states defined in the coordinator... no pillo este TODO
         J48 classifier = myAgent.getModel(); //Getting the trained classifiers
         try {
             ACLMessage msg2 = myAgent.blockingReceive();
@@ -47,29 +47,31 @@ public class classifiersBehaviour extends CyclicBehaviour {
                     atts.add(new Attribute(attributes[i]));
                 }
                 atts.add(new Attribute("Class")); //me lo he patillado un poco, he añadido una class
+                System.out.println("Attributes length: "+attributes.length);
                 String[] vals = attr_vals_id[1];
                 double[] values = new double[vals.length+1];
                 for (int i = 0; i < vals.length; i++) {
                     values[i] = Double.parseDouble(vals[i]);
                 }
-                values[vals.length] = -1; //seteamos un valor random a la class
+                values[vals.length] = 1; //seteamos un valor random a la class
 
                 Instances dataset = new Instances("TestInstances", atts, 0);
-                Instance testInstances = new DenseInstance(1,values);
-                dataset.add(testInstances);
+                Instance testInstance = new DenseInstance(1,values);
+                dataset.add(testInstance);
                 dataset.setClassIndex(dataset.numAttributes()-1);
-
+                System.out.println(testInstance);
                 //TODO: preguntar que hacen a la gente, me parece raro que si es test instance necesite la clase tb
 
-                testInstances.setDataset(dataset);
+                testInstance.setDataset(dataset);
                 double output = 0;
                 try {
-                    output = classifier.classifyInstance(testInstances);
+                    // testInstance.setClassMissing();
+                    output = classifier.classifyInstance(testInstance);
+                    //System.out.println(output);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                //System.out.println("CLASSIFIER MANDA OUTPUT Y ESTADO: " + coordAgent.state);
 
                 double performance = myAgent.getPerformance();
                 String[] message = new String[3];
@@ -84,8 +86,8 @@ public class classifiersBehaviour extends CyclicBehaviour {
 
                 //System.out.println(msg_to_send);
                 //System.out.println(myAgent.getAID().getName()+" sent the classification of instance to coordinator");
-
                 }
+
                 } catch (UnreadableException e) {
                     e.printStackTrace();
                 }
