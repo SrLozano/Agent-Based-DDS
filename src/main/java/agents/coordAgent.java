@@ -148,7 +148,7 @@ public class coordAgent extends Agent{
 
         try {
             DFService.register(this,dfd);
-            System.out.println("["+getLocalName()+"]:"+"DF Registered - coordinator agent");
+            System.out.println("["+getLocalName()+"]:"+" DF Registered - coordinator agent");
         } catch (FIPAException e) {
             System.out.println("["+getLocalName()+"]:" + "An error detected while trying to add the DF - coordinator");
             e.printStackTrace();
@@ -156,7 +156,7 @@ public class coordAgent extends Agent{
         }
     }
 
-    /* Take down behaviour by unregistering it from DF */
+    /* Take down agent by unregistering it from DF */
 
     protected void takeDown() {
         try {

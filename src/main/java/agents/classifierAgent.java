@@ -129,7 +129,7 @@ public class classifierAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
-            System.out.println("["+getLocalName()+"]:"+"DF Registered - classifier agent");
+            System.out.println("["+getLocalName()+"]:"+" DF Registered - classifier agent");
         } catch (FIPAException fe) {
             System.out.println("["+getLocalName()+"]:" + "An error detected while trying to add the DF - classifier");
             fe.printStackTrace();
@@ -137,7 +137,7 @@ public class classifierAgent extends Agent{
         }
     }
 
-    /* Take down behaviour by unregistering it from DF */
+    /* Take down agent by unregistering it from DF */
 
     protected void takeDown() {
         try {
