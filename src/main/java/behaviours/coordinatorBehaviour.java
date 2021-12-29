@@ -199,5 +199,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         msg_toSend.addReceiver(dest); //The receiver is the coordinator Agent
         myAgent.send(msg_toSend); //The message is sent
 
+        System.out.println("AQUI CAMBIO");
+        myAgent.setNameState(coordAgent.global_states.IDLE);
+
     }
 }

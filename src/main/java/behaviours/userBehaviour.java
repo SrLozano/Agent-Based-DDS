@@ -64,9 +64,7 @@ public class userBehaviour extends CyclicBehaviour {
                 }
             }
         } catch(Exception e){
-            System.out.println("An error occured. EN USER");
-            // TODO: añadir más adelante un reinsert path si salta error
-            e.printStackTrace();
+            System.out.println("An error occurred when trying to read data from source");
         }
     }
 }
