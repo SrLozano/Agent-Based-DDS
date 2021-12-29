@@ -27,6 +27,7 @@ public class userBehaviour extends CyclicBehaviour {
             // Using Scanner for getting input from user
             //System.out.println("HOLA " + coordAgent.state);
             if (coordAgent.state==coordAgent.global_states.IDLE) {
+                Thread.sleep(1000); // For achieving a good print order in the terminal
                 System.out.println("Please, enter path of the file containing the instances to be classified.");
                 Scanner in = new Scanner(System.in);
                 String path_file = in.nextLine();

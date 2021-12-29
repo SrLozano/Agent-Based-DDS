@@ -32,6 +32,7 @@ public class classifierAgent extends Agent{
     private Double performance;
     private J48 model;
 
+    /* Set initial configuration and behaviours for agent */
 
     protected void setup(){
         Object[] args = getArguments(); // For setting arguments in the constructor
@@ -106,7 +107,7 @@ public class classifierAgent extends Agent{
         }
     }
 
-    /*  */
+    /* Register agent into the Jade System */
 
     private void register(){
         // Register petition
@@ -128,9 +129,10 @@ public class classifierAgent extends Agent{
 
         try {
             DFService.register(this, dfd );
-        }
-        catch (FIPAException fe) {
-            System.out.println("["+getLocalName()+"]:" + "An error detected while trying to add the DF");
+            System.out.println("["+getLocalName()+"]:"+"DF Registered - classifier agent");
+        } catch (FIPAException fe) {
+            System.out.println("["+getLocalName()+"]:" + "An error detected while trying to add the DF - classifier");
+            fe.printStackTrace();
             doDelete();
         }
     }
@@ -163,6 +165,4 @@ public class classifierAgent extends Agent{
     public J48 getModel(){
         return this.model;
     }
-
 }
-
