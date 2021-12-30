@@ -5,8 +5,12 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +62,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                 System.out.println("Number of instances to test: " + test_data.size());
 
                 for (int i = 0; i < test_data.size(); i++) {
+
                     Instance firm = test_data.get(i);
                     double[] aux = firm.toDoubleArray();
                     int k = 0;
@@ -76,15 +81,48 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     int l = 0; //active classifiers counter
                     int c = 0; //identifier of the classifier agent studied in the for loop
                     for (String[] attributes : allarrays) {
+
+                        //TODO: Añado código reciclado de training donde nos quedamos con los atributos del classifier
+
+                        /*
+                        int[] indexesInstancesToTest = new int[attributes.length]; // Array for the indexes to be sent
+                        // We add the attribute index to the list of attributes to select
+                        for (int w = 0; w < attributes.length; ++w) {
+                            Attribute att = test_data.attribute(attributes[w]);
+                            indexesInstancesToTest[w] = att.index();
+                        }
+                        Remove removeFilter = new Remove();
+                        removeFilter.setAttributeIndicesArray(indexesInstancesToTest);
+                        removeFilter.setInvertSelection(true);
+                        removeFilter.setInputFormat(test_data);
+                        Instances filtered_test = Filter.useFilter(test_data, removeFilter);
+
+                        Instance filtered_instance = filtered_test.get(i);
+
+                        //Esta última línea sería el problema, la cosa es que estaríamos sacando la misma instancia para
+                        //cada combinación de atributos lo cuál sería un problema porque en cada iteración se enviaría
+                        //la misma instancia (por ejemplo la número 1) filtrada de 12 formas distintas.
+                        //¿Se podría eliminar el otro for y de alguna forma seguir con esta opción? Igualmente no
+                        //podemos enviar un mensaje de tipo Instance, me obliga a que sea tipo Instances.
+
+                        //¿Preguntar a Jordi? Porque enviar el dataset completo para que lo trate el Classifier podría
+                        //hacerse pero el objetivo era que trabajasen con una sola instance.
+
+                        */
+
+                        //TODO: Llega hasta aquí
+
                         // Lists are created to use containsAll function
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
                         List<Integer> attributesList = new ArrayList(Arrays.asList(attributes));
+
+
 
                         if (nameList.containsAll(attributesList)) {
                             String[] values = new String[attributes.length];
                             String[] ordered_attributes = new String[attributes.length];
                             int aux_index_values = 0;
-                            for (int m=0; m<aux.length; m++){ //just select the values corresponding to the 6 attributes of the classifier
+                            for (int m = 0; m < aux.length; m++) { //just select the values corresponding to the 6 attributes of the classifier
                                 if (attributesList.contains(String.valueOf(firm.attribute(m)).split(" ")[1])) {
                                     values[aux_index_values] = Double.toString(aux[m]);
                                     ordered_attributes[aux_index_values] = String.valueOf(firm.attribute(m)).split(" ")[1];
@@ -92,17 +130,22 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                                 }
                             }
 
+
                             System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
 
+
                             // Prepare message for the instance to be classified
+
                             String[][] message = new String[3][];
                             message[0] = ordered_attributes;
                             String[] instance_id = new String[1]; //length 1 because we just need the num of instance
                             instance_id[0] = Double.toString(i + 1);
                             message[1] = values;
                             message[2] = instance_id;
+
+
                             msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
@@ -127,6 +170,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                 myAgent.setNameState(coordAgent.global_states.IDLE);
             }
         }
+
         catch (Exception e) {
             e.printStackTrace();
             System.out.println("An error happened");
