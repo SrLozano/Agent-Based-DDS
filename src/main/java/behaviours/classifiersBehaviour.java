@@ -6,6 +6,7 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -67,11 +68,14 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 Instances filtered_dataset = (Instances) msg2.getContentObject();
                 filtered_dataset.setClassIndex(filtered_dataset.numAttributes()-1);
                 Instance testInstance = filtered_dataset.get(0);
-
                 double output = 0;
                 try {
-
-                    output = classifier.classifyInstance(testInstance);
+                    Evaluation eval = new Evaluation(filtered_dataset);
+                    eval.evaluateModel(classifier, filtered_dataset);
+                    System.out.println();
+                    System.out.println("Predictions: "+ eval.predictions().toString().split(" ")[1]+" Real: "+filtered_dataset.get(0).toDoubleArray()[6]);
+                    System.out.println("correct: "+eval.correct()); //retorna correct = 0 :(
+                    //output = classifier(testInstance);
 
                 } catch (Exception e) {
                     e.printStackTrace();
