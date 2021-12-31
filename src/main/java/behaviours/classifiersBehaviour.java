@@ -65,7 +65,9 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 //TODO: preguntar que hacen a la gente, me parece raro que si es test instance necesite la clase tb
 
                 Instances filtered_dataset = (Instances) msg2.getContentObject();
+                filtered_dataset.setClassIndex(filtered_dataset.numAttributes()-1);
                 Instance testInstance = filtered_dataset.get(0);
+
                 double output = 0;
                 try {
 
