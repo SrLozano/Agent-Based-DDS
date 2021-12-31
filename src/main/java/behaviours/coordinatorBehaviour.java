@@ -43,7 +43,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                 //Instances test_data = source.getDataSet();
 
                 String[][] allarrays =
-                        {
+                        {       //TODO: cuando tengamos la class en los files añadir a las listas Risk
                                 {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk"},
                                 {"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK"},
                                 {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk"},
@@ -60,13 +60,12 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
                 // For every firm in the test file the correspondent classifiers are selected
                 System.out.println("Number of instances to test: " + test_data.size());
-
+                int instance_num = 1;
                 for (int i = 0; i < test_data.size(); i++) {
-
                     Instance firm = test_data.get(i);
                     double[] aux = firm.toDoubleArray();
                     int k = 0;
-                    String[] names = new String[aux.length]; // List with the firm attributes
+                    String[] names = new String[aux.length-4]; // List with the firm attributes
                     for (int j = 0; j < aux.length; j++) { // For each attribute
                         // Only if the attribute is not missing it gets introduced in the array
                         if (aux[j] != 1000.0) {
@@ -75,29 +74,34 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         }
                     }
 
+                    ArrayList<Attribute> atts = new ArrayList<Attribute>();
+                    for (int w = 0; w < aux.length; ++w) {
+                        atts.add(new Attribute(String.valueOf(firm.attribute(w))));
+                    }
                     //TODO: (si tenemos tiempo) CFP instead de iterar por todos los classifiers para ver si pueden clasificar los atributos
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
                     int l = 0; //active classifiers counter
                     int c = 0; //identifier of the classifier agent studied in the for loop
                     for (String[] attributes : allarrays) {
-
-                        //TODO: Añado código reciclado de training donde nos quedamos con los atributos del classifier
-
-                        /*
+                        //attributes que filtramos:
                         int[] indexesInstancesToTest = new int[attributes.length]; // Array for the indexes to be sent
                         // We add the attribute index to the list of attributes to select
+
                         for (int w = 0; w < attributes.length; ++w) {
                             Attribute att = test_data.attribute(attributes[w]);
                             indexesInstancesToTest[w] = att.index();
                         }
+
+                        Instances dataset_test = new Instances ("TestInstance",atts,0);
+                        dataset_test.add(firm);
+
                         Remove removeFilter = new Remove();
                         removeFilter.setAttributeIndicesArray(indexesInstancesToTest);
                         removeFilter.setInvertSelection(true);
-                        removeFilter.setInputFormat(test_data);
-                        Instances filtered_test = Filter.useFilter(test_data, removeFilter);
+                        removeFilter.setInputFormat(dataset_test);
+                        Instances filtered_test = Filter.useFilter(dataset_test, removeFilter);
 
-                        Instance filtered_instance = filtered_test.get(i);
 
                         //Esta última línea sería el problema, la cosa es que estaríamos sacando la misma instancia para
                         //cada combinación de atributos lo cuál sería un problema porque en cada iteración se enviaría
@@ -108,7 +112,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         //¿Preguntar a Jordi? Porque enviar el dataset completo para que lo trate el Classifier podría
                         //hacerse pero el objetivo era que trabajasen con una sola instance.
 
-                        */
+
 
                         //TODO: Llega hasta aquí
 
@@ -116,9 +120,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
                         List<Integer> attributesList = new ArrayList(Arrays.asList(attributes));
 
-
-
                         if (nameList.containsAll(attributesList)) {
+                            /*
+                            System.out.println(nameList);
                             String[] values = new String[attributes.length];
                             String[] ordered_attributes = new String[attributes.length];
                             int aux_index_values = 0;
@@ -129,7 +133,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                                     aux_index_values += 1;
                                 }
                             }
-
+                            */
 
                             System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
@@ -138,15 +142,16 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
                             // Prepare message for the instance to be classified
 
+                            /*
                             String[][] message = new String[3][];
                             message[0] = ordered_attributes;
                             String[] instance_id = new String[1]; //length 1 because we just need the num of instance
                             instance_id[0] = Double.toString(i + 1);
                             message[1] = values;
                             message[2] = instance_id;
+                            */
 
-
-                            msg_to_send.setContentObject(message); //The content of the message it's the firm data in array form
+                            msg_to_send.setContentObject(filtered_test); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
 
@@ -164,7 +169,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     }
                     //System.out.println("l = " + l);
                     myAgent.setNumber_classifications(l);
-                    voting();
+                    voting(instance_num);
+                    instance_num+=1;
                 }
                 System.out.println("AQUI CAMBIO");
                 myAgent.setNameState(coordAgent.global_states.IDLE);
@@ -177,7 +183,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         }
     }
 
-    public void voting () {
+    public void voting (int instance_num) {
         // System.out.println(myAgent.getNameState());
         //System.out.println("ESTAMOS EN VOTING");
 
@@ -198,10 +204,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                 //System.out.println("Message content: " + response);
                 performances[responses] = Double.parseDouble(response[0]);
                 classifications[responses] = Double.parseDouble(response[1]);
-                int instance_num =  (int) Double.parseDouble(response[2]);
                 responses += 1;
                 //System.out.println("Responses post sum: "+ responses);
-                if (instance_num == 14) { //when it has received the results of all instances set to idle so it does not enter again this behaviour until new input
+                if (instance_num == 15) { //when it has received the results of all instances set to idle so it does not enter again this behaviour until new input
                     myAgent.setNameState(coordAgent.global_states.IDLE);
                 }
 
