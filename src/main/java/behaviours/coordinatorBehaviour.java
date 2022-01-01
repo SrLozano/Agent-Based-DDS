@@ -59,6 +59,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
                 // For every firm in the test file the correspondent classifiers are selected
                 System.out.println("Number of instances to test: " + test_data.size());
+
+                //System.out.println(test_data.numClasses());
                 int instance_num = 1;
                 for (int i = 0; i < test_data.size(); i++) {
                     Instance firm = test_data.get(i);
@@ -120,7 +122,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                             }
                             */
 
-                            System.out.println("The firm is sent to correspondent classifier");
+                            // System.out.println("The firm is sent to correspondent classifier");
                             //Send the agent with all the attributes the instance
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
 
@@ -138,6 +140,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
                             msg_to_send.setContentObject(filtered_test); //The content of the message it's the firm data in array form
                             AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
+                            //System.out.println("The classifier in charge is:" + c);
+                            //System.out.println(filtered_test);
                             msg_to_send.addReceiver(dest); //The receiver is the coordinator Agent
 
                             //System.out.println("PRINT ANTES DEL SEND to classifier " + c);
@@ -145,6 +149,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                             myAgent.send(msg_to_send); //The message is sent
                             l += 1; // l indicates the total number of classifiers active
 
+                            // TODO: Este estado no cambia nada!!!
                             myAgent.setNameState(coordAgent.global_states.VOTING); //after sending an instance we set it to votin
                             // System.out.println("BLOCKED");
                             // myAgent.blockingReceive(MessageTemplate.MatchContent("continue"));
@@ -157,8 +162,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     voting(instance_num);
                     instance_num+=1;
                 }
-                System.out.println("AQUI CAMBIO");
+                // System.out.println("AQUI CAMBIO");
                 myAgent.setNameState(coordAgent.global_states.IDLE);
+
             }
         }
 
@@ -237,7 +243,11 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         }
         AID dest = new AID("userAgent", AID.ISLOCALNAME);
         msg_toSend.addReceiver(dest); //The receiver is the coordinator Agent
+
+        System.out.println(myAgent.state);
         myAgent.send(msg_toSend); //The message is sent
+
+
 
     }
 }

@@ -30,9 +30,10 @@ public class classifiersBehaviour extends CyclicBehaviour {
         coordAgent.global_states stateString = coordAgent.state;
 
         //TODO: How to call the states defined in the coordinator... no pillo este TODO
-        J48 classifier = myAgent.getModel(); //Getting the trained classifiers
+
         try {
             ACLMessage msg2 = myAgent.blockingReceive();
+            J48 classifier = myAgent.getModel(); //Getting the trained classifiers
 
             if (msg2 != null) {
                 //msg2 has the attributes in the first array, the values in the second, and the instance id in the third
@@ -68,13 +69,16 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 Instances filtered_dataset = (Instances) msg2.getContentObject();
                 filtered_dataset.setClassIndex(filtered_dataset.numAttributes()-1);
                 Instance testInstance = filtered_dataset.get(0);
+
                 double output = 0;
+
                 try {
                     Evaluation eval = new Evaluation(filtered_dataset);
                     eval.evaluateModel(classifier, filtered_dataset);
-                    System.out.println();
-                    System.out.println("Predictions: "+ eval.predictions().toString().split(" ")[1]+" Real: "+filtered_dataset.get(0).toDoubleArray()[6]);
-                    System.out.println("correct: "+eval.correct()); //retorna correct = 0 :(
+                    // System.out.println();
+                    // System.out.println("Predictions: "+ eval.predictions().toString().split(" ")[1]+" Real: "+filtered_dataset.get(0).toDoubleArray()[6]);
+                    // System.out.println("correct: "+eval.correct()); //retorna correct = 0 :(
+                    output = Double.parseDouble(eval.predictions().toString().split(" ")[1]);
                     //output = classifier(testInstance);
 
                 } catch (Exception e) {

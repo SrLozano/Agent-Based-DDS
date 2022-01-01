@@ -60,7 +60,9 @@ public class userBehaviour extends CyclicBehaviour {
                     e.printStackTrace();
                 }
             } // SENDING or VOTING. A result is received so that sliptinputIntances can continue
+
             else if (coordAgent.state==coordAgent.global_states.VOTING){
+                //System.out.println("hola");
                 int received_instances = 0;
                 double[] results = new double[15];
                 while (received_instances<15){ // 15 is the number of instances in a file. TODO: put this in a global variable?
@@ -70,6 +72,7 @@ public class userBehaviour extends CyclicBehaviour {
                     received_instances+=1;
                     System.out.println("Num of received instances: "+received_instances);
                 System.out.println(results);
+
                 }
             }
         } catch(Exception e){
