@@ -1,12 +1,21 @@
+/*****************************************************************
+ TODO: Fill description of this file. Explain everything
+ @behaviour: coordinatorBehaviour
+
+ @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
+ @group: 6 - IMAS - URV - UPC
+ *****************************************************************/
+
 package behaviours;
 
 import agents.coordAgent;
+
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+
 import weka.core.Attribute;
-import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -19,30 +28,29 @@ import java.util.List;
 
 
 public class coordinatorBehaviour extends CyclicBehaviour {
+
     private final coordAgent myAgent;
 
-    // Constructor of the behaviour
+    /* Class constructor for the behaviour. Agent is set as a class variable */
+
     public coordinatorBehaviour(coordAgent coordAgent) {
         super(coordAgent);
         this.myAgent = coordAgent;
     }
 
+    /* TODO: Fill */
+
     public void action () {
         try {
-            // System.out.println("MEGA TESTTTTTTTTTTT");
+            //receives the instances from the User Agent
             ACLMessage msg = myAgent.blockingReceive();
-            // System.out.println("MEGA TESTTTTTTTTTTT AFTER BLOCKING");
-
-            // System.out.println(msg.getSender().getName());
 
             AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
             if (msg.getSender().getName().equals(user_ID.getName())) {
                 Instances test_data = (Instances) msg.getContentObject();
-                // ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/'+ "0input_user.arff");
-                //Instances test_data = source.getDataSet();
 
                 String[][] allarrays =
-                        {       //TODO: cuando tengamos la class en los files añadir a las listas Risk
+                        {
                                 {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},
                                 {"LOCATION_ID", "PARA_B", "numbers", "Score_MV", "Risk_D", "CONTROL_RISK", "Risk"},
                                 {"PARA_A", "Score_B", "Risk_C", "District_Loss", "Risk_F", "Detection_Risk", "Risk"},
@@ -58,17 +66,16 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         };
 
                 // For every firm in the test file the correspondent classifiers are selected
-                System.out.println("Number of instances to test: " + test_data.size());
 
-                //System.out.println(test_data.numClasses());
                 int instance_num = 1;
-                for (int i = 0; i < test_data.size(); i++) {
+                for (int i = 0; i < test_data.size(); i++) { //for every instance in the test data
                     Instance firm = test_data.get(i);
                     int k = 0;
-                    String[] names = new String[firm.numValues()-5]; // List with the firm attributes
+                    String[] names = new String[firm.numValues()-5]; // List with the firm containing attributes
                     for (int j = 0; j < firm.numValues(); j++) { // For each attribute
                         // Only if the attribute is not missing it gets introduced in the array
-                        if (firm.value(j) !=1000.0 && firm.value(j)!=45) {
+
+                        if (!(firm.value(j) ==1000.0 || (firm.value(j)==45.0 && String.valueOf(firm.attribute(j)).split(" ")[1].equals("LOCATION_ID")))) { //the 45 is because of an issue with the location ID attribute
                             names[k] = String.valueOf(firm.attribute(j)).split(" ")[1]; // The attribute name is introduced
                             k += 1;
                         }
@@ -174,9 +181,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         }
     }
 
+    /* TODO */
+
     public void voting (int instance_num) {
-        // System.out.println(myAgent.getNameState());
-        //System.out.println("ESTAMOS EN VOTING");
 
         int number_classifiers = myAgent.getNumber_classifications();
         // Arrays to collect performances and classifications from classifiers
@@ -246,8 +253,5 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
         System.out.println(myAgent.state);
         myAgent.send(msg_toSend); //The message is sent
-
-
-
     }
 }

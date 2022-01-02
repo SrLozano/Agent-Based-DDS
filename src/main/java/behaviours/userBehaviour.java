@@ -21,7 +21,6 @@ import weka.core.converters.ConverterUtils.DataSource;
 import java.util.Arrays;
 import java.util.Scanner;
 
-
 public class userBehaviour extends CyclicBehaviour {
 
     String path_file; // Project path of the file reading instances from. This is not a global path
@@ -36,7 +35,8 @@ public class userBehaviour extends CyclicBehaviour {
         number_instances_test = 0;
     }
 
-    /* userBehaviour is in charge of reading instances from test source and receiving the results to display them altogether */
+    /* This is in charge of reading instances from test source and receiving the results to display them altogether */
+
     public void action() {
         try {
             // userAgent asks for new test instances only if the coord is in IDLE state (i.e. trained and not busy)
@@ -75,6 +75,8 @@ public class userBehaviour extends CyclicBehaviour {
                     System.out.println("An error occurred when trying to read data from source. Please enter the source again");
                 }
             }
+
+            // TODO: Sometimes this isn't printed
 
             // Collect the results and display them altogether
             else if (coordAgent.state==coordAgent.global_states.VOTING){

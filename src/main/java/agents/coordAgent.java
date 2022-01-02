@@ -95,7 +95,7 @@ public class coordAgent extends Agent{
                 Randomize randomize = new Randomize();
                 randomize.setInputFormat(splittrainval);
 
-                // TODO: Why 300? Explain it... lo pide el enunciado no? que sean 300 instances
+                //we send 300 random instances to train each classifier
                 Instances trainval = new Instances(splittrainval, 0, 300);
 
                 AgentController anotherAgent;

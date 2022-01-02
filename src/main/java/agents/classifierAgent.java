@@ -73,7 +73,6 @@ public class classifierAgent extends Agent{
                     rp.setInputFormat(trainval);
                     rp.setPercentage(percentage);
                     Instances train = Filter.useFilter(trainval, rp); // 100 - percentage for  training
-
                     RemovePercentage rp_validation = new RemovePercentage();
                     rp_validation.setInputFormat(trainval);
                     rp_validation.setPercentage(percentage);
