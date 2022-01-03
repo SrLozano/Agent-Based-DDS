@@ -55,9 +55,9 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 }
 
                 double performance = myAgent.getPerformance();
-                String[] message = new String[2]; // Format [performance, classification]
-                message[0] = String.valueOf(performance); // Performance is sent to give a weight to the classification
-                message[1] = String.valueOf(output);
+                Double[] message = new Double[2]; // Format [performance, classification]
+                message[0] = performance; // Performance is sent to give a weight to the classification
+                message[1] = output;
 
                 // Message is sent to the coordinator agent
                 ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);

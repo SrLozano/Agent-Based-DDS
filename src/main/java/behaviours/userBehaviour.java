@@ -15,6 +15,7 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 
+import jade.lang.acl.UnreadableException;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 
@@ -75,27 +76,35 @@ public class userBehaviour extends CyclicBehaviour {
                     System.out.println("An error occurred when trying to read data from source. Please enter the source again");
                 }
             }
-
-            // TODO: Sometimes this isn't printed
-
-            // Collect the results and display them all together
-            else if (coordAgent.state==coordAgent.global_states.VOTING){
-                System.out.println("Si que estoy entrando");
-                int received_instances = 0;
-                double[] results = new double[this.number_instances_test];
-
-                while (received_instances<this.number_instances_test){
-                    System.out.println();
-                    ACLMessage msg_received = myAgent.blockingReceive();
-                    results[received_instances] = (double) msg_received.getContentObject();
-                    received_instances+=1;
-                    System.out.println("New result received. Number of received instances insofar: "+received_instances);
-                }
-                System.out.println("The results obtained for the test instances are: " + Arrays.toString(results));
-            }
-
+            collect_results(this.number_instances_test);
+            this.number_instances_test = 0; //we set it back to 0 until new isntances arrive
         } catch(Exception e){
             System.out.println("An error occurred in the userBehaviour");
+        }
+    }
+    private void collect_results (int instances_to_test) {
+        if (instances_to_test != 0) { //it will be executed only if there are isntances to classify
+            int received_instances = 0;
+            double[] results = new double[instances_to_test];
+            double[] real_labels = new double[instances_to_test];
+            while (received_instances < instances_to_test) {
+                try {
+                    System.out.println();
+                    ACLMessage msg_received = myAgent.blockingReceive();
+                    Double[] received_msg = (Double[]) msg_received.getContentObject();
+                    results[received_instances] = received_msg[0];
+                    real_labels[received_instances] = received_msg[1];
+                    received_instances += 1;
+                    System.out.println("New result received. Number of received instances insofar: " + received_instances);
+                } catch (UnreadableException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (received_instances == instances_to_test) {
+                System.out.println("The results obtained for the test instances are: " + Arrays.toString(results));
+                System.out.println("The real labels of the test instances are: " + Arrays.toString(real_labels));
+                //TODO: no se si queréis printear también la accuracy con las test instances
+            }
         }
     }
 }

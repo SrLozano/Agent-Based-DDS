@@ -117,11 +117,13 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     }
                     myAgent.setNumber_classifications(l);
                     //with all the instances sent, we start the voting
-                    voting();
+
+                    double trueLabel = firm.value(firm.numValues()-1);
+                    voting(trueLabel);
                     //instance_num+=1;
                 }
+                //we set it back to idle when all instances have been clsassified
                 myAgent.setNameState(coordAgent.global_states.IDLE);
-
             }
         }
 
@@ -133,27 +135,24 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
     /* TODO: explain the voting */
 
-    public void voting () {
+    private void voting (double trueLabel) {
 
         int number_classifiers = myAgent.getNumber_classifications();
         // Arrays to collect performances and classifications from classifiers
         double[] performances = new double[number_classifiers];
         double[] classifications = new double[number_classifiers];
-
         int responses = 0;
         // Responses are obtained until all classifiers vote
         while (responses < number_classifiers) {
             try {
-                //System.out.println("Responses in while: "+ responses);
-                //System.out.println("NumberClassifiers in while: "+ number_classifiers);
                 ACLMessage msg_received = myAgent.blockingReceive();
-                // Message contains a double array with [performance, classification, num_of_instance]
-                String[] response = (String[]) msg_received.getContentObject();
-                //System.out.println("Message content: " + response);
-                performances[responses] = Double.parseDouble(response[0]);
-                classifications[responses] = Double.parseDouble(response[1]);
+                // Message contains a double array with [performance, classification, real label]
+                //String[] response = (String[]) msg_received.getContentObject();
+                Double[] response = (Double[]) msg_received.getContentObject();
+                performances[responses] = response[0];
+                classifications[responses] = response[1];
                 responses += 1;
-                //System.out.println("Responses post sum: "+ responses);
+
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
@@ -187,7 +186,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
             final_result += 0;
         }
         ACLMessage msg_toSend = new ACLMessage(ACLMessage.INFORM);
-        double message = final_result;
+        Double[] message = new Double[2];
+        message[0] = final_result;
+        message[1] = trueLabel;
         try {
             msg_toSend.setContentObject(message);
         } catch (IOException e) {
