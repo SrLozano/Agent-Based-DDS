@@ -17,6 +17,7 @@ import jade.lang.acl.UnreadableException;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
+import weka.core.Instance;
 import weka.core.Instances;
 
 import java.io.IOException;
@@ -43,23 +44,17 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 // Prepare instance to be classified
                 Instances filtered_dataset = (Instances) message_to_classify.getContentObject();
                 filtered_dataset.setClassIndex(filtered_dataset.numAttributes()-1);
-
+                Instance test_instance = filtered_dataset.get(0);
                 double output = -1;
                 try {
-                    // Get model prediction for the instance
-                    Evaluation eval = new Evaluation(filtered_dataset);
-                    eval.evaluateModel(classifier, filtered_dataset);
-                    output = Math.round(eval.evaluateModelOnce(classifier,filtered_dataset.instance(0)));
-
-                    // TODO: Wait Jordi's comments on this & and add explanations
-                    if (output == 1){ output = 0; } else { output = 1; }
-
+                    // Get model classifiation for the instance
+                    output = classifier.classifyInstance(test_instance);
+                    //System.out.println("Output: "+output+" Real class: "+test_instance.classValue());
                 } catch (Exception e) {
                     System.out.println("Evaluation could not be done correctly. And error occurred");
                 }
 
                 double performance = myAgent.getPerformance();
-
                 String[] message = new String[2]; // Format [performance, classification]
                 message[0] = String.valueOf(performance); // Performance is sent to give a weight to the classification
                 message[1] = String.valueOf(output);

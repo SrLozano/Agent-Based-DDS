@@ -78,8 +78,9 @@ public class userBehaviour extends CyclicBehaviour {
 
             // TODO: Sometimes this isn't printed
 
-            // Collect the results and display them altogether
+            // Collect the results and display them all together
             else if (coordAgent.state==coordAgent.global_states.VOTING){
+                System.out.println("Si que estoy entrando");
                 int received_instances = 0;
                 double[] results = new double[this.number_instances_test];
 
