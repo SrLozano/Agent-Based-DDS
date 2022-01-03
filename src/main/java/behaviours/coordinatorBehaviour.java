@@ -38,14 +38,20 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         this.myAgent = coordAgent;
     }
 
-    /* TODO: Fill description*/
+    /* Composed by two different steps of the process:
+       1. Receives Test Dataset sent by the User Agent so each instance is prepared and sent to the classifier capable
+          of doing the classification.
+       2. Receives the classification results by the classifiers and starts a Voting process where the result for
+          each instance is decided.*/
 
     public void action () {
         try {
-            //receives the instances from the User Agent
-            ACLMessage msg = myAgent.blockingReceive();
-            myAgent.setNameState(coordAgent.global_states.VOTING); //we set it to voting
+
+            ACLMessage msg = myAgent.blockingReceive(); //Receives the test instances from the User Agent
+            myAgent.setNameState(coordAgent.global_states.VOTING); //State of coordinator set to Voting
             AID user_ID = new AID("userAgent", AID.ISLOCALNAME);
+
+            // Checking that the sender of the message is the User Agent
             if (msg.getSender().getName().equals(user_ID.getName())) {
                 Instances test_data = (Instances) msg.getContentObject();
 
@@ -66,33 +72,33 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         };
 
                 // For every firm in the test file the correspondent classifiers are selected
-
-                //int instance_num = 1;
-                for (int i = 0; i < test_data.size(); i++) { //for every instance in the test data
+                for (int i = 0; i < test_data.size(); i++) { // For every instance in the test data
                     Instance firm = test_data.get(i);
                     int k = 0;
                     String[] names = new String[firm.numValues()-5]; // List with the firm containing attributes
                     for (int j = 0; j < firm.numValues(); j++) { // For each attribute
                         // Only if the attribute is not missing it gets introduced in the array
-                        if (!(firm.value(j) ==1000.0 || (firm.value(j)==45.0 && String.valueOf(firm.attribute(j)).split(" ")[1].equals("LOCATION_ID")))) { //the 45 is because of an issue with the location ID attribute
+                        if (!(firm.value(j) ==1000.0 || (firm.value(j)==45.0 && String.valueOf(firm.attribute(j)).split(" ")[1].equals("LOCATION_ID")))) { //The 45 is because of an issue with the location ID attribute
                             names[k] = String.valueOf(firm.attribute(j)).split(" ")[1]; // The attribute name is introduced
                             k += 1;
                         }
                     }
 
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
-                    int l = 0; //active classifiers counter
-                    int c = 0; //identifier of the classifier agent studied in the for loop
+                    int l = 0; // Active classifiers counter
+                    int c = 0; // Identifier of the classifier agent studied in the for loop
                     for (String[] attributes : allarrays) {
-                        //attributes que filtramos:
-                        int[] indexesInstancesToTest = new int[attributes.length]; // Array for the indexes to be sent
-                        // We add the attribute index to the list of attributes to select
 
+                        // Attributes that we filter:
+                        int[] indexesInstancesToTest = new int[attributes.length];
+
+                        // We add the attribute index to the list of attributes to select
                         for (int w = 0; w < attributes.length; ++w) {
                             Attribute att = test_data.attribute(attributes[w]);
-                            indexesInstancesToTest[w] = att.index(); //attributes to keep
+                            indexesInstancesToTest[w] = att.index(); //Attributes to keep
                         }
 
+                        // Selecting the firm of the dataset_test and filtering to keep the correspondent attributes
                         Instances dataset_test = new Instances (test_data,i,1);
                         Remove removeFilter = new Remove();
                         removeFilter.setAttributeIndicesArray(indexesInstancesToTest);
@@ -100,29 +106,28 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                         removeFilter.setInputFormat(dataset_test);
                         Instances filtered_test = Filter.useFilter(dataset_test, removeFilter);
 
-
                         // Lists are created to use containsAll function
                         List<Integer> nameList = new ArrayList(Arrays.asList(names));
                         List<Integer> attributesList = new ArrayList(Arrays.asList(attributes));
 
-                        if (nameList.containsAll(attributesList)) { //if the classifier attributes are all present in the instance
+                        //Checking if the classifier attributes are all present in the instance
+                        if (nameList.containsAll(attributesList)) {
                             ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
-                            msg_to_send.setContentObject(filtered_test); //The content of the message it's the firm data
+                            msg_to_send.setContentObject(filtered_test); // The content of the message it's the firm data
                             AID dest = new AID("classifier-" + c, AID.ISLOCALNAME);
-                            msg_to_send.addReceiver(dest); //The receiver is the corresponding classifier Agent
-                            myAgent.send(msg_to_send); //The message is sent
+                            msg_to_send.addReceiver(dest); // The receiver is the corresponding classifier Agent
+                            myAgent.send(msg_to_send); // The message is sent
                             l += 1; // l indicates the total number of classifiers active
                         }
                         c += 1;
                     }
                     myAgent.setNumber_classifications(l);
-                    //with all the instances sent, we start the voting
 
+                    // With all the instances sent, we start the voting
                     double trueLabel = firm.value(firm.numValues()-1);
                     voting(trueLabel);
-                    //instance_num+=1;
                 }
-                //we set it back to idle when all instances have been clsassified
+                // We set the state back to idle when all instances have been classified
                 myAgent.setNameState(coordAgent.global_states.IDLE);
             }
         }
@@ -142,12 +147,12 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         double[] performances = new double[number_classifiers];
         double[] classifications = new double[number_classifiers];
         int responses = 0;
+
         // Responses are obtained until all classifiers vote
         while (responses < number_classifiers) {
             try {
                 ACLMessage msg_received = myAgent.blockingReceive();
-                // Message contains a double array with [performance, classification, real label]
-                //String[] response = (String[]) msg_received.getContentObject();
+                // Message contains a double array with [performance, classification]
                 Double[] response = (Double[]) msg_received.getContentObject();
                 performances[responses] = response[0];
                 classifications[responses] = response[1];
@@ -158,9 +163,8 @@ public class coordinatorBehaviour extends CyclicBehaviour {
             }
         }
 
-        double sum_performances = 0;
-
         // We get the sum of the performances so each one could have a good weight
+        double sum_performances = 0;
         for (int i = 0; i < performances.length; ++i) {
             sum_performances += performances[i];
         }
@@ -179,6 +183,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         /* If the result is bigger or equal than 0.5 it means that the majority (considering weights) of agents
         agree that the instance should be classified as 1. Otherwise, they return a 0. In case of a tie result
         is 1 because a false positive is better than a false negative */
+
         double final_result = 0;
         if (result >= 0.5) {
             final_result += 1;

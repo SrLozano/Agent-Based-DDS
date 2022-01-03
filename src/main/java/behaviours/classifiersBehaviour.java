@@ -41,19 +41,21 @@ public class classifiersBehaviour extends CyclicBehaviour {
             J48 classifier = myAgent.getModel(); // Get the trained classifiers
 
             if (message_to_classify != null) {
+
                 // Prepare instance to be classified
                 Instances filtered_dataset = (Instances) message_to_classify.getContentObject();
                 filtered_dataset.setClassIndex(filtered_dataset.numAttributes()-1);
                 Instance test_instance = filtered_dataset.get(0);
+
                 double output = -1;
                 try {
-                    // Get model classifiation for the instance
+                    // Get model classification for the instance
                     output = classifier.classifyInstance(test_instance);
-                    //System.out.println("Output: "+output+" Real class: "+test_instance.classValue());
                 } catch (Exception e) {
                     System.out.println("Evaluation could not be done correctly. And error occurred");
                 }
 
+                // Obtaining the performance of the agent
                 double performance = myAgent.getPerformance();
                 Double[] message = new Double[2]; // Format [performance, classification]
                 message[0] = performance; // Performance is sent to give a weight to the classification
@@ -63,7 +65,7 @@ public class classifiersBehaviour extends CyclicBehaviour {
                 ACLMessage msg_to_send = new ACLMessage(ACLMessage.INFORM);
                 msg_to_send.setContentObject(message);
                 AID dest = new AID("coordAgent", AID.ISLOCALNAME);
-                msg_to_send.addReceiver(dest); // The receiver is the coordinator Agent
+                msg_to_send.addReceiver(dest);
                 myAgent.send(msg_to_send); // The message is sent
             }
             else{ throw new IOException("There is not and instance to to classify in the message"); }

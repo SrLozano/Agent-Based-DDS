@@ -59,7 +59,7 @@ public class userBehaviour extends CyclicBehaviour {
 
                     // Data is sent only if it has been correctly read
                     if (this.number_instances_test != 0) {
-                        System.out.println("Read has been correctly read");
+                        System.out.println("Data has been correctly read");
 
                         // Send a message with the data read
                         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
@@ -77,19 +77,21 @@ public class userBehaviour extends CyclicBehaviour {
                 }
             }
             collect_results(this.number_instances_test);
-            this.number_instances_test = 0; //we set it back to 0 until new isntances arrive
+            this.number_instances_test = 0; //we set it back to 0 until new instances arrive
         } catch(Exception e){
             System.out.println("An error occurred in the userBehaviour");
         }
     }
     private void collect_results (int instances_to_test) {
-        if (instances_to_test != 0) { //it will be executed only if there are isntances to classify
+        // It will be executed only if there are instances to classify
+        if (instances_to_test != 0) {
             int received_instances = 0;
             double[] results = new double[instances_to_test];
             double[] real_labels = new double[instances_to_test];
             while (received_instances < instances_to_test) {
                 try {
                     System.out.println();
+                    // Receives the results of the voting process done by the Coordinator Agent
                     ACLMessage msg_received = myAgent.blockingReceive();
                     Double[] received_msg = (Double[]) msg_received.getContentObject();
                     results[received_instances] = received_msg[0];
@@ -101,9 +103,24 @@ public class userBehaviour extends CyclicBehaviour {
                 }
             }
             if (received_instances == instances_to_test) {
+                System.out.println();
                 System.out.println("The results obtained for the test instances are: " + Arrays.toString(results));
+                System.out.println();
                 System.out.println("The real labels of the test instances are: " + Arrays.toString(real_labels));
-                //TODO: no se si queréis printear también la accuracy con las test instances
+
+                // Counting the correct classifications
+                int positive = 0;
+                for (int i=0; i < received_instances; i++){
+                    if (results[i] == real_labels[i]){
+                        positive+=1;
+                    }
+                }
+
+                // Computing the accuracy with the test instances
+                float accuracy = (float) positive/received_instances;
+                System.out.println();
+                System.out.println("The accuracy with the test instances is: " + accuracy*100 + "%");
+                System.out.println();
             }
         }
     }
