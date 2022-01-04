@@ -1,5 +1,10 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ Each classifiers' agent is responsible for classifying as fraudulent or legal a new observation or enterprise after
+ being trained with a reduced set of instances. Thus, it will have a J48 Weka model trained after having received
+ the training instances as a message from the coordinator agent. In the process, the training performance of the
+ classifier is obtained so that depending on this metric a weight is associated with this classifier in the voting
+ system. Moreover, a classifier agent is in charge of classifying and instance when it receives one.
+
  @agent: classifier
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano

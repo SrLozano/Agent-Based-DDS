@@ -1,5 +1,9 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ Coordinator agent's role is to serve as a gateway between the user agent and the classification agents. Thus,
+ it is in charge of splitting and sending the training instances for the corresponding classifiers and of serving
+ as a decision system (i.e. gather the different classification outputs from the classifiers and emitting a single
+ answer by a defined voting system).
+
  @agent: coordinator
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
@@ -169,7 +173,7 @@ public class coordAgent extends Agent{
     /* Setters & Getters */
 
     public void setNameState(global_states state){
-        this.state = state;
+        coordAgent.state = state;
     }
 
     public void setNumber_classifications(int number_classifiers){

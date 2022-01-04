@@ -1,5 +1,8 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ userBehaviour is in charge of reading instances from test source and receiving the results to display them altogether.
+ After that, the results of the classifiers are received, displayed together with ground truth and the overall accuracy
+ of the system with the resulting training instances is obtained.
+
  @behaviour: userBehaviour
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
@@ -78,19 +81,25 @@ public class userBehaviour extends CyclicBehaviour {
             }
             collect_results(this.number_instances_test);
             this.number_instances_test = 0; //we set it back to 0 until new instances arrive
+
         } catch(Exception e){
             System.out.println("An error occurred in the userBehaviour");
         }
     }
+
+    /* The results of the classifiers are received and accuracy computed */
+
     private void collect_results (int instances_to_test) {
         // It will be executed only if there are instances to classify
         if (instances_to_test != 0) {
+
             int received_instances = 0;
             double[] results = new double[instances_to_test];
             double[] real_labels = new double[instances_to_test];
+
+            // Until all the results are received
             while (received_instances < instances_to_test) {
                 try {
-                    System.out.println();
                     // Receives the results of the voting process done by the Coordinator Agent
                     ACLMessage msg_received = myAgent.blockingReceive();
                     Double[] received_msg = (Double[]) msg_received.getContentObject();
@@ -102,6 +111,7 @@ public class userBehaviour extends CyclicBehaviour {
                     e.printStackTrace();
                 }
             }
+
             if (received_instances == instances_to_test) {
                 System.out.println();
                 System.out.println("The results obtained for the test instances are: " + Arrays.toString(results));

@@ -1,5 +1,8 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ User agent's role is to provide an interface for the user to interact with the system. For that reason,
+ it provides a way of selecting or introducing as input the attributes related to a firm being fraudulent.
+ Afterwards, it receives the final result for each instance from the coordinator and displays system accuracy
+
  @agent: user
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
