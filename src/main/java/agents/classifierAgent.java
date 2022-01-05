@@ -65,9 +65,7 @@ public class classifierAgent extends Agent{
 
                 Instances trainval = (Instances) train_obj;
 
-                // TODO: Please someone explain why this IF. (trainval != null is for avoiding NullPointer Exception)
-                if (trainval != null && trainval.getClass() == Instances.class) {
-
+                if (trainval != null) { // Avoid NullPointer Exception
                     double percentage = 25; // Percentage for validation purposes
 
                     Random random = new Random(42);

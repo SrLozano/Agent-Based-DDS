@@ -58,8 +58,6 @@ public class coordAgent extends Agent{
             ConverterUtils.DataSource source = new ConverterUtils.DataSource(System.getProperty("user.dir") + '/' + "train_file.arff");
             Instances data = source.getDataSet();
 
-            // TODO: This can be improved. Manage this by class attributes and add classifiers commenced out. The list can be generated randomly by public class RandomSubset not by hand by ourselves
-
             String[][] attributes_list =
                 {
                     {"Sector_score", "Risk_A", "TOTAL", "Score_MV", "RiSk_E", "Inherent_Risk", "Risk"},

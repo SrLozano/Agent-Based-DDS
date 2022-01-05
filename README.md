@@ -1,13 +1,7 @@
-# Agent-Based-DDS
+# Agent-Based-DDS 🤖 🗳
 Agent-Based-DDS design for the IMAS subject at Universitat Rovira i Virgili
 
-TODO: Follow this template for README.md
-
-List of commands:
-
-- mvn -P systemAgents exec:java
-- mvn install
-- mvn -P jade-gui exec:java
+TODO: Follow this template for README.md. mvn -P jade-gui exec:java
 
 # My-Readme-Template 💥💯
 Brief description of a few lines about the project, technologies used in the development... Use emoticons in each of the readMe titles, so that they correctly represent the section.
@@ -17,13 +11,14 @@ You could try our demo at https://link.com and that it's!
 
 To install the script you can put some basic commands like <code>git clone</code> in that way or:
 
-First way:
+First:
 ```sh
-npm install my-crazy-module --save
+mvn install
 ```
-Second way:
-> npm install my-crazy-module --save
-
+Second:
+```sh
+mvn -P systemAgents exec:java
+```
 __If you want to highlight something important you just have to put it in bold__ . Keep in mind that **bold can be done with a double low bar or with a double asterisk**
 
 Some warnings could be placed like this:

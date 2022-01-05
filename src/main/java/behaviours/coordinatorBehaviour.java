@@ -1,5 +1,12 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ coordinatorBehaviour's role is to serve as a gateway between the user agent and the classification agents. Thus,
+ it is in charge of splitting and sending the training instances for the corresponding classifiers and of serving
+ as a decision system (i.e. gather the different classification outputs from the classifiers and emitting a single
+ answer by a defined voting system). For this reason, it is composed by two different steps of the process:
+
+    1. Each instance of the test is sent to the classifier capable of doing the classification.
+    2. Receive results and starts a Voting process where the result for each instance is decided.
+
  @behaviour: coordinatorBehaviour
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
@@ -138,7 +145,9 @@ public class coordinatorBehaviour extends CyclicBehaviour {
         }
     }
 
-    /* TODO: explain the voting */
+    /* The voting system receives the performance of each classifier and assigns a proportional weight to that vote.
+    After that, the final vote is computed considering that if the result is bigger or equal than 0.5 it means that
+    the agents agree that the instance should be classified as 1. Otherwise, they return a 0.*/
 
     private void voting (double trueLabel) {
 
@@ -165,11 +174,12 @@ public class coordinatorBehaviour extends CyclicBehaviour {
 
         // We get the sum of the performances so each one could have a good weight
         double sum_performances = 0;
-        for (int i = 0; i < performances.length; ++i) {
-            sum_performances += performances[i];
+        for (double performance : performances) {
+            sum_performances += performance;
         }
 
         double[] weights = new double[performances.length];
+
         // We get the importance (weight) of each classifier knowing that all must sum 1
         for (int i = 0; i < performances.length; ++i) {
             weights[i] = performances[i] / sum_performances;

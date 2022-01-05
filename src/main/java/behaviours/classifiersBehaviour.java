@@ -1,5 +1,9 @@
 /*****************************************************************
- TODO: Fill description of this file. Explain everything
+ classifierBehaviour is responsible for classifying as fraudulent or legal a new observation or enterprise.
+ Thus, the behaviour receives an instance, classifies it and sends back the result to the coordinator.
+ It is important noticing that it also sends the performance of the classifier so that the voting system
+ can give a weight to this classification.
+
  @behaviour: classifierBehaviour
 
  @authors: Sergi Cirera, Iago Águila, Laia Borrell and Mario Lozano
@@ -15,7 +19,6 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
