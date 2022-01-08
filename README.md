@@ -4,18 +4,24 @@ Agent-Based-DDS design for the Introduction to Multi-Agent Systems subject at Un
 # Goal of the project 💥💯
 The goal of this project is to create an agent-based decision support system (A-DSS) for detecting fraudulent firms. It aims to properly coordinate a set of agents to form an application where an organization could enter a set of data about a given firm and the system returned an accurate classification stating whether the firm has risk of fraudulence or not. All the code is written in **Java**, **Maven** has been used as build automation tool, **JADE** (Java Agent DEvelopment Framework) as a platform for agent development and **Weka** for its collection of machine learning algorithms.
 
-## Run it 🚀
+## Run it - Maven Goals 🚀
 
-Once downloaded the system can be run in the following way:
+Once downloaded the system can be run in the following way thanks to the **maven goals** defined:
 
 Compile project:
 ```sh
 mvn install
 ```
-Execute:
+Execute complete system with integrated gui:
 ```sh
 mvn -P systemAgents exec:java
 ```
+Execute complete system without integrated gui:
+```sh
+mvn -P systemAgents exec:java
+```
+
+This last two maven goal are going to wake up both the user and coordinator agents. The following agents and the complete system is going to be initiated from those agents (please check code and report).
 
 ## Usage 🎮
 After executing the code the user agent asks/allows the human user of the system to enter a path corresponding to a file containing the firms to classify. Whenever it receives a path, the user reads the dataset, and it sends the input instances to the coordinator who will receive those instances and iterate over each of them checking which attributes they contain, and which are missing. Then, it checks which classifiers have been trained with six attributes that are present in the instance available information and are sent the corresponding instance by the coordinator. When an instance arrives to the corresponding classifiers, they used their trained J48 model to classify the new firm and sent their estimation back to the coordinator. Followingly, the coordinator agent waits for the active classifiers’ responses and when it has gathered them all, it performs a weighted mean with each classifier vote/result (which will be 0 if no risk or 1 if risk exists). Finally, when the user agent keeps receiving the results, it iteratively stores and show them on the console.

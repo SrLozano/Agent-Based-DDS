@@ -30,24 +30,8 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>jade-gui</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.0.0</version>
-                        <configuration>
-                            <mainClass>jade.Boot</mainClass>
-                            <arguments>
-                                <argument>-gui</argument>
-                            </arguments>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+        <!--Maven goal for waking up both the user and coordinator agents with a JADE gui-->
+        <!--The following agents and the complete system is going to be initiated from those agents (please check code and report)-->
         <profile>
             <id>systemAgents</id>
             <build>
@@ -62,7 +46,6 @@
                                 <argument>-gui</argument>
                                 <argument>-agents</argument>
                                 <argument>userAgent:agents.userAgent; coordAgent:agents.coordAgent</argument>
-                                <!--argument>coordAgent:agents.coordAgent</argument-->
                              </arguments>
                          </configuration>
                      </plugin>
