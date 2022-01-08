@@ -1,1 +1,1 @@
-http://localhost:7778/acc
+http://pc-78-224.customer.ask4.lan:7778/acc

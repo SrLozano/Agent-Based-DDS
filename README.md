@@ -1,89 +1,51 @@
 # Agent-Based-DDS 🤖 🗳
-Agent-Based-DDS design for the IMAS subject at Universitat Rovira i Virgili
+Agent-Based-DDS design for the Introduction to Multi-Agent Systems subject at Universitat Rovira i Virgili. This project was co-author by [Sergi Cirera Rocosa](https://github.com/Sergi-Cirera-Rocosa), [Laia Borrell Araunabeña ](https://github.com/Laiaborrell), [Mario Lozano Cortés](https://github.com/SrLozano) and [Iago Águila Cifuentes ](https://github.com/iAguila98). Artificial Intelligence master's students at _Universitat Politècnica de Catalunya · BarcelonaTech - UPC_.
 
-TODO: Follow this template for README.md. mvn -P jade-gui exec:java
-
-# My-Readme-Template 💥💯
-Brief description of a few lines about the project, technologies used in the development... Use emoticons in each of the readMe titles, so that they correctly represent the section.
+# Goal of the project 💥💯
+The goal of this project is to create an agent-based decision support system (A-DSS) for detecting fraudulent firms. It aims to properly coordinate a set of agents to form an application where an organization could enter a set of data about a given firm and the system returned an accurate classification stating whether the firm has risk of fraudulence or not. All the code is written in **Java**, **Maven** has been used as build automation tool, **JADE** (Java Agent DEvelopment Framework) as a platform for agent development and **Weka** for its collection of machine learning algorithms.
 
 ## Run it 🚀
-You could try our demo at https://link.com and that it's!
 
-To install the script you can put some basic commands like <code>git clone</code> in that way or:
+Once downloaded the system can be run in the following way:
 
-First:
+Compile project:
 ```sh
 mvn install
 ```
-Second:
+Execute:
 ```sh
 mvn -P systemAgents exec:java
 ```
-__If you want to highlight something important you just have to put it in bold__ . Keep in mind that **bold can be done with a double low bar or with a double asterisk**
 
-Some warnings could be placed like this:
-
-__Warning:__ *This is a cursive warning, using one asterisk.*
-
-## Extra sections
-Here you can add all the sections that occur to you in relation to your project. Some examples are:
-- Usage example 💡
-- Where the data is stored? 🕵️
-- What is the X Algorithm? 🧠
+## Usage 🎮
+After executing the code the user agent asks/allows the human user of the system to enter a path corresponding to a file containing the firms to classify. Whenever it receives a path, the user reads the dataset, and it sends the input instances to the coordinator who will receive those instances and iterate over each of them checking which attributes they contain, and which are missing. Then, it checks which classifiers have been trained with six attributes that are present in the instance available information and are sent the corresponding instance by the coordinator. When an instance arrives to the corresponding classifiers, they used their trained J48 model to classify the new firm and sent their estimation back to the coordinator. Followingly, the coordinator agent waits for the active classifiers’ responses and when it has gathered them all, it performs a weighted mean with each classifier vote/result (which will be 0 if no risk or 1 if risk exists). Finally, when the user agent keeps receiving the results, it iteratively stores and show them on the console.
 
 ## For developers 💻
 In this section we will put the extra commands and tasks that people who want to collaborate in the project will have to perform. For example, installation of programs, packages, dependencies ...
 
-```sh
-make example
-npm test
-```
-
-And later, install the package in https://example.com and run
-```sh
-make example2
-```
 
 ## Next updates 🔜
-(if necessary)
+There are no updates programmed. The project has already been delivered.
 
 ## Issues 🤕
-(if necessary)
+No issues found so far.
 
 ## Want to collaborate? 🙋🏻
 Feel free to improve and optimize the existing code. To contribute to the project, read the previous points carefully and do the next steps with the project:
-1. Fork it (<https://github.com/yourname/yourproject/fork>)
+1. Fork it (<https://github.com/SrLozano/Agent-Based-DDS/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
 
 ## Need help ❓
-Feel free to contact the developer if you have any questions or suggestions about the project or how you can help with it.
+Feel free to contact the developers if you have any questions or suggestions about the project or how you can help with it.
 
 ## Screenshots 📸
-Some screenshots of the project working if necessary:
+Some screenshots of the project working:
 
-<img src="/screenshots/sc1.png" alt="Screenshot 1" width="50%" height="50%" />
+![ScreenShot](screenshots/sc1.png)
+
+![ScreenShot](screenshots/sc2.png)
 
 
-## -----------EXTRA CONTENT---------
-### Beautiful commits
-Emojis make everything nice, so you just have to include one of these in each of the commits you make:
-> Translation improvements 🔣
-
-> Code optimizations 🛠️
-
-> Improved functionality 🛠️
-
-> Working in XXX 🛠️
-
-> Functionality implemented ✔️
-
-> Class/File added ✔️
-
-> Design improvements ✏️
-
-> App deploy updated 🚀
-
-> New release 🚀
