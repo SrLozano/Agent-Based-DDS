@@ -16,12 +16,8 @@ Execute complete system with integrated gui:
 ```sh
 mvn -P systemAgents exec:java
 ```
-Execute complete system without integrated gui:
-```sh
-mvn -P systemAgents exec:java
-```
 
-This last two maven goal are going to wake up both the user and coordinator agents. The following agents and the complete system is going to be initiated from those agents (please check code and report).
+This last maven goal is going to wake up both the user and coordinator agents. The following agents and the complete system is going to be initiated from those agents (please check code and report).
 
 ## Usage 🎮
 After executing the code the user agent asks/allows the human user of the system to enter a path corresponding to a file containing the firms to classify. Whenever it receives a path, the user reads the dataset, and it sends the input instances to the coordinator who will receive those instances and iterate over each of them checking which attributes they contain, and which are missing. Then, it checks which classifiers have been trained with six attributes that are present in the instance available information and are sent the corresponding instance by the coordinator. When an instance arrives to the corresponding classifiers, they used their trained J48 model to classify the new firm and sent their estimation back to the coordinator. Followingly, the coordinator agent waits for the active classifiers’ responses and when it has gathered them all, it performs a weighted mean with each classifier vote/result (which will be 0 if no risk or 1 if risk exists). Finally, when the user agent keeps receiving the results, it iteratively stores and show them on the console.
