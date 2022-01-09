@@ -1,1 +1,1 @@
-http://10-192-181-186client.eduroam.upc.edu:7778/acc
+http://pc-78-224.customer.ask4.lan:7778/acc

@@ -1,4 +1,4 @@
-# Agent-Based-DDS 🤖 🗳
+# Agent-Based-DSS 🤖 🗳
 Agent-Based-DDS design for the Introduction to Multi-Agent Systems subject at Universitat Rovira i Virgili. This project was co-author by [Sergi Cirera Rocosa](https://github.com/Sergi-Cirera-Rocosa), [Laia Borrell Araunabeña ](https://github.com/Laiaborrell), [Mario Lozano Cortés](https://github.com/SrLozano) and [Iago Águila Cifuentes ](https://github.com/iAguila98). Artificial Intelligence master's students at _Universitat Politècnica de Catalunya · BarcelonaTech - UPC_.
 
 # Goal of the project 💥💯
