@@ -19,6 +19,10 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class userAgent extends Agent{
 
     /* Set initial configuration and behaviours for agent */
@@ -36,11 +40,20 @@ public class userAgent extends Agent{
 
         // Service provided. As many services as desired can be added
         ServiceDescription sd = new ServiceDescription();
+        java.util.Properties prop = new Properties();
+
+        // Read properties.xml file
+        try {
+            FileInputStream fin = new FileInputStream(System.getProperty("user.dir") + '/' + "properties.xml");
+            prop.loadFromXML(fin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Basic setup of the service
-        sd.setType("UserAgent");
+        sd.setType(prop.getProperty("username"));
         sd.setName(getName());
-        sd.setOwnership("Group6");
+        sd.setOwnership(prop.getProperty("group"));
 
         // Finish agent description
         dfd.setName(getAID());

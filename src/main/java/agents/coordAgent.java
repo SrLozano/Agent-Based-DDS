@@ -31,6 +31,10 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.Randomize;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class coordAgent extends Agent{
 
     // Define structure of possible states -> State machine
@@ -74,11 +78,25 @@ public class coordAgent extends Agent{
                     {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
                 };
 
+
             int count = 0;
+            java.util.Properties prop = new Properties();
+
+            // Read properties.xml file
+            try {
+                FileInputStream fin = new FileInputStream(System.getProperty("user.dir") + '/' + "properties.xml");
+                prop.loadFromXML(fin);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            int num_classifiers = Integer.parseInt(prop.getProperty("numclassifiers"));
+
+            String[][] final_attributes_list = new String [num_classifiers][7];
+            System.arraycopy(attributes_list, 0, final_attributes_list, 0, num_classifiers);
 
             // Starting a loop for each one of the packages that have to be sent to the classifier agent
-            for (String[] indexes : attributes_list) {
-
+            for (String[] indexes : final_attributes_list) {
                 int[] indexesInstancesToTrainVal = new int [indexes.length]; // Array for the indexes to be sent
 
                 // We add the attribute index to the list of attributes to select
@@ -137,11 +155,20 @@ public class coordAgent extends Agent{
 
         // Service provided. As many services as desired can be added
         ServiceDescription sd = new ServiceDescription();
+        java.util.Properties prop = new Properties();
+
+        // Read properties.xml file
+        try {
+            FileInputStream fin = new FileInputStream(System.getProperty("user.dir") + '/' + "properties.xml");
+            prop.loadFromXML(fin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Basic setup of the service
-        sd.setType("CoordinatorAgent");
+        sd.setType(prop.getProperty("coordinatorname"));
         sd.setName(getName());
-        sd.setOwnership("Group6");
+        sd.setOwnership(prop.getProperty("group"));
 
         // Finish agent description
         dfd.setName(getAID());

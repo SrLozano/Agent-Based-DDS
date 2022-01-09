@@ -28,10 +28,12 @@ import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 
 public class coordinatorBehaviour extends CyclicBehaviour {
@@ -78,6 +80,19 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                                 {"Score_A", "Score_B", "Money_Value", "District_Loss", "Score", "Detection_Risk", "Risk"}
                         };
 
+                // Read properties.xml file
+                java.util.Properties prop = new Properties();
+                try {
+                    FileInputStream fin = new FileInputStream(System.getProperty("user.dir") + '/' + "properties.xml");
+                    prop.loadFromXML(fin);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                int num_classifiers = Integer.parseInt(prop.getProperty("numclassifiers"));
+                String[][] final_attributes_list = new String [num_classifiers][7];
+                System.arraycopy(allarrays, 0, final_attributes_list, 0, num_classifiers);
+
                 // For every firm in the test file the correspondent classifiers are selected
                 for (int i = 0; i < test_data.size(); i++) { // For every instance in the test data
                     Instance firm = test_data.get(i);
@@ -94,7 +109,7 @@ public class coordinatorBehaviour extends CyclicBehaviour {
                     // An instance is passed to a classifier if it contains all the attributes for that particular instance
                     int l = 0; // Active classifiers counter
                     int c = 0; // Identifier of the classifier agent studied in the for loop
-                    for (String[] attributes : allarrays) {
+                    for (String[] attributes : final_attributes_list) {
 
                         // Attributes that we filter:
                         int[] indexesInstancesToTest = new int[attributes.length];

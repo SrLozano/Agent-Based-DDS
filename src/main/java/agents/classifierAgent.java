@@ -30,6 +30,9 @@ import weka.filters.unsupervised.instance.RemovePercentage;
 import weka.filters.Filter;
 import weka.classifiers.Evaluation;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Random;
 
 public class classifierAgent extends Agent{
@@ -117,13 +120,22 @@ public class classifierAgent extends Agent{
 
         // Service provided. As many services as desired can be added
         ServiceDescription sd = new ServiceDescription();
+        java.util.Properties prop = new Properties();
+
+        // Read properties.xml file
+        try {
+            FileInputStream fin = new FileInputStream(System.getProperty("user.dir") + '/' + "properties.xml");
+            prop.loadFromXML(fin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Basic setup of the service
-        sd.setType("ClassifierAgent");
+        sd.setType(prop.getProperty("classifiername"));
         sd.setName(getName());
         Property state = new Property("State", 0);
         sd.addProperties(state);
-        sd.setOwnership("Group6");
+        sd.setOwnership(prop.getProperty("group"));
 
         // Finish agent description
         dfd.setName(getAID());

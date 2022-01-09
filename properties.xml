@@ -1,0 +1,9 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>These are the properties used in our system. All of them can be changed from here</comment>
+    <entry key="group">Group6</entry>
+    <entry key="username">UserAgent</entry>
+    <entry key="coordinatorname">CoordinatorAgent</entry>
+    <entry key="classifiername">ClassifierAgent</entry>
+    <entry key="numclassifiers">12</entry>
+</properties>

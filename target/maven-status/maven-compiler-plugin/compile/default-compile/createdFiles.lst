@@ -1,0 +1,4 @@
+agents/userAgent.class
+agents/coordAgent.class
+agents/coordAgent$global_states.class
+behaviours/coordinatorBehaviour.class
