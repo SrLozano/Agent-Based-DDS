@@ -6,9 +6,9 @@ The goal of this project is to create an agent-based decision support system (A-
 
 ## Run it - Maven Goals 🚀
 
-Once downloaded the system can be run in the following way thanks to the **maven goals** defined:
+Once downloaded the system can be run in the following way thanks to the **maven goal** defined:
 
-Compile project:
+But first we need to compile the project with the following maven task:
 ```sh
 mvn install
 ```
